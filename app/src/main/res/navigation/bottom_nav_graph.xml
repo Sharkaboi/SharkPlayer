@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_nav_graph"
+    app:startDestination="@id/nav_home">
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.sharkaboi.sharkplayer.modules.home.ui.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.sharkaboi.sharkplayer.modules.settings.ui.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/nav_utilities"
+        android:name="com.sharkaboi.sharkplayer.modules.utilities.ui.UtilitiesFragment"
+        android:label="fragment_utilities"
+        tools:layout="@layout/fragment_utilities" />
+
+    <fragment
+        android:id="@+id/directoryFragment"
+        android:name="com.sharkaboi.sharkplayer.modules.directory.ui.DirectoryFragment"
+        android:label="fragment_directory"
+        tools:layout="@layout/fragment_directory" >
+        <argument
+            android:name="path"
+            app:argType="string" />
+    </fragment>
+
+    <!--Global actions-->
+    <action
+        android:id="@+id/openDirectory"
+        app:destination="@id/directoryFragment"
+        app:enterAnim="@anim/fade_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/fade_out" />
+</navigation>

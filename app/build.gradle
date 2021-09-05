@@ -1,0 +1,85 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "kotlin-kapt"
+    id "dagger.hilt.android.plugin"
+    id "com.google.android.gms.oss-licenses-plugin"
+    id "androidx.navigation.safeargs.kotlin"
+    id "org.jlleitschuh.gradle.ktlint"
+}
+
+android {
+    compileSdk 31
+    defaultConfig {
+        applicationId "com.sharkaboi.sharkplayer"
+        minSdk 23
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+    }
+}
+
+dependencies {
+    //core dependencies
+    implementation "androidx.core:core-ktx:$core_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.multidex:multidex:$multidex_version"
+    implementation "androidx.preference:preference-ktx:$pref_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_version"
+    //design
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefresh_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
+    implementation "com.google.android.material:material:$mdc_version"
+    implementation "com.airbnb.android:lottie:$lottie_version"
+    implementation "androidx.core:core-splashscreen:$splash_version"
+    //exoplayer
+    implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
+    //ffmpeg
+    implementation "com.writingminds:FFmpegAndroid:$ffmpeg_version"
+    //hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    //navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    //datastore
+    implementation "androidx.datastore:datastore-preferences:$datastore_version"
+    //util
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
+    implementation "com.google.android.gms:play-services-oss-licenses:$oss_version"
+    implementation "com.jakewharton.timber:timber:$timber_version"
+    //testing
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_version"
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$expresso_version"
+}
+
+ktlint {
+    disabledRules.set(["no-wildcard-imports"])
+}

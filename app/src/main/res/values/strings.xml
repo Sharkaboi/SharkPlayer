@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SharkPlayer</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="file_folder_thumbnail">File/Folder thumbnail</string>
+    <string name="more_options">More options</string>
+    <string name="remove">Remove</string>
+</resources>
