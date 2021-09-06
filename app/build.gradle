@@ -61,6 +61,8 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
     //ffmpeg
     implementation "com.writingminds:FFmpegAndroid:$ffmpeg_version"
+    //coil
+    implementation "io.coil-kt:coil:$coil_version"
     //hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"

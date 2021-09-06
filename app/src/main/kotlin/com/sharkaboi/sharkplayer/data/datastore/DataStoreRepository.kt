@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.sharkaboi.sharkplayer.common.extensions.childCount
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -33,28 +34,30 @@ class DataStoreRepository(
                 SharkPlayerFile.Directory(
                     folderName = file.nameWithoutExtension,
                     path = path,
-                    childFileCount = file.list()?.size ?: 0
+                    childFileCount = file.childCount
                 )
             } ?: emptyList()
         }.flowOn(Dispatchers.IO)
 
-    suspend fun removeFavorite(favorite: SharkPlayerFile.Directory): Unit = withContext(Dispatchers.IO) {
-        dataStore.edit { preferences ->
-            val oldSet: List<SharkPlayerFile.Directory> =
-                favouritesDirsFlow.firstOrNull() ?: emptyList()
-            val newSet: MutableSet<String> = oldSet.map { it.path }.toMutableSet()
-            newSet.remove(favorite.path)
-            preferences[FAVORITES_KEY] = newSet
+    suspend fun removeFavorite(favorite: SharkPlayerFile.Directory): Unit =
+        withContext(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                val oldSet: List<SharkPlayerFile.Directory> =
+                    favouritesDirsFlow.firstOrNull() ?: emptyList()
+                val newSet: MutableSet<String> = oldSet.map { it.path }.toMutableSet()
+                newSet.remove(favorite.path)
+                preferences[FAVORITES_KEY] = newSet
+            }
         }
-    }
 
-    suspend fun addFavorite(favorite: SharkPlayerFile.Directory): Unit = withContext(Dispatchers.IO) {
-        dataStore.edit { preferences ->
-            val oldSet: List<SharkPlayerFile.Directory> =
-                favouritesDirsFlow.firstOrNull() ?: emptyList()
-            val newSet: MutableSet<String> = oldSet.map { it.path }.toMutableSet()
-            newSet.add(favorite.path)
-            preferences[FAVORITES_KEY] = newSet
+    suspend fun addFavorite(favorite: SharkPlayerFile.Directory): Unit =
+        withContext(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                val oldSet: List<SharkPlayerFile.Directory> =
+                    favouritesDirsFlow.firstOrNull() ?: emptyList()
+                val newSet: MutableSet<String> = oldSet.map { it.path }.toMutableSet()
+                newSet.add(favorite.path)
+                preferences[FAVORITES_KEY] = newSet
+            }
         }
-    }
 }

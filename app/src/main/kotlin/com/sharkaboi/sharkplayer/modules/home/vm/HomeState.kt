@@ -21,6 +21,10 @@ internal fun MutableLiveData<HomeState>.setIdle() {
     this.value = HomeState.Idle
 }
 
+internal fun MutableLiveData<HomeState>.setLoading() {
+    this.value = HomeState.Loading
+}
+
 internal fun MutableLiveData<HomeState>.getDefault() = this.apply {
-    this.value = HomeState.Idle
+    this.setIdle()
 }

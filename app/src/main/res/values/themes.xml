@@ -7,8 +7,8 @@
         <item name="colorSecondary">@color/colorDark</item>
         <item name="colorSecondaryVariant">@color/colorDark</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="android:statusBarColor" tools:targetApi="l">?colorOnPrimary</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/colorDark</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="Theme.SharkPlayer.ActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -18,8 +18,8 @@
         <item name="colorSecondary">@color/colorAccent</item>
         <item name="colorSecondaryVariant">@color/colorAccent</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="android:statusBarColor" tools:targetApi="l">?colorOnPrimary</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/colorDark</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="Theme.SharkPlayer.Splash">
