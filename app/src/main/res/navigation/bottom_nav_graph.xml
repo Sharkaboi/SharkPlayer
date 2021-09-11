@@ -23,16 +23,46 @@
         android:id="@+id/directoryFragment"
         android:name="com.sharkaboi.sharkplayer.modules.directory.ui.DirectoryFragment"
         android:label="fragment_directory"
-        tools:layout="@layout/fragment_directory" >
+        tools:layout="@layout/fragment_directory">
         <argument
             android:name="path"
             app:argType="string" />
     </fragment>
+    <activity
+        android:id="@+id/audioPlayerActivity"
+        android:name="com.sharkaboi.sharkplayer.exoplayer.ui.AudioPlayerActivity"
+        android:label="AudioPlayerActivity">
+        <argument
+            android:name="path"
+            app:argType="string" />
+    </activity>
+    <activity
+        android:id="@+id/videoPlayerActivity"
+        android:name="com.sharkaboi.sharkplayer.exoplayer.ui.VideoPlayerActivity"
+        android:label="VideoPlayerActivity">
+        <argument
+            android:name="path"
+            app:argType="string" />
+    </activity>
 
     <!--Global actions-->
     <action
         android:id="@+id/openDirectory"
         app:destination="@id/directoryFragment"
+        app:enterAnim="@anim/fade_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/fade_out" />
+    <action
+        android:id="@+id/openVideo"
+        app:destination="@id/videoPlayerActivity"
+        app:enterAnim="@anim/fade_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/fade_out" />
+    <action
+        android:id="@+id/openAudio"
+        app:destination="@id/audioPlayerActivity"
         app:enterAnim="@anim/fade_in"
         app:exitAnim="@anim/fade_out"
         app:popEnterAnim="@anim/fade_in"

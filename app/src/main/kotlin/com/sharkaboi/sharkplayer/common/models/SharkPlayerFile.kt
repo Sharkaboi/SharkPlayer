@@ -34,12 +34,21 @@ sealed class SharkPlayerFile {
         val size: Long
     ) : SharkPlayerFile()
 
-    fun getIdentifier(): String {
+    fun getAbsolutePath(): String {
         return when (this) {
             is Directory -> this.path
             is VideoFile -> this.path
             is AudioFile -> this.path
             is OtherFile -> this.path
+        }
+    }
+
+    fun getFile(): File {
+        return when (this) {
+            is Directory -> File(this.path)
+            is VideoFile -> File(this.path)
+            is AudioFile -> File(this.path)
+            is OtherFile -> File(this.path)
         }
     }
 

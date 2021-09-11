@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sharkaboi.sharkplayer">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".SharkPlayer"
         android:allowBackup="true"
@@ -11,7 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SharkPlayer">
         <activity
-            android:name=".exoplayer.ui.PlayerActivity"
+            android:name=".exoplayer.ui.VideoPlayerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".exoplayer.ui.AudioPlayerActivity"
             android:exported="true" />
         <activity
             android:name=".modules.main.ui.MainActivity"

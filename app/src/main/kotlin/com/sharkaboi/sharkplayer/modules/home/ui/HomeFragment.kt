@@ -39,6 +39,8 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.rvFavorites.adapter = null
+        binding.rvHomeDirectories.adapter = null
         _binding = null
     }
 

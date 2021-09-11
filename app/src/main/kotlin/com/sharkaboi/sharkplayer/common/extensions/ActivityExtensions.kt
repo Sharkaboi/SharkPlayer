@@ -3,11 +3,15 @@ package com.sharkaboi.sharkplayer.common.extensions
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 
 internal fun Activity.showToast(message: String, length: Int = Toast.LENGTH_SHORT) =
     Toast.makeText(this, message, length).show()
+
+internal fun Activity.showToast(@StringRes id: Int, length: Int = Toast.LENGTH_SHORT) =
+    Toast.makeText(this, id, length).show()
 
 internal inline fun <reified T : Activity> Activity.launch(block: Intent.() -> Unit = {}) {
     val intent = Intent(this, T::class.java)

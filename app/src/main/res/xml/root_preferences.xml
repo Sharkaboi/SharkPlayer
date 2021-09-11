@@ -6,4 +6,30 @@
             app:key="darkTheme"
             app:title="Dark Theme" />
     </PreferenceCategory>
+
+    <PreferenceCategory app:title="Video">
+        <EditTextPreference
+            app:dialogMessage="Separate by commas"
+            app:icon="@drawable/ic_language"
+            app:key="subtitleLanguage"
+            app:title="Default Subtitle Language"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:dialogMessage="Separate by commas"
+            app:icon="@drawable/ic_audio_track"
+            app:key="audioLanguage"
+            app:title="Default Audio Language"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_paused"
+            app:key="startPausedVideo"
+            app:title="Start Paused" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Audio">
+        <SwitchPreference
+            app:icon="@drawable/ic_paused"
+            app:key="startPausedAudio"
+            app:title="Start Paused" />
+    </PreferenceCategory>
 </PreferenceScreen>

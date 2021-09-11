@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.sharkaboi.sharkplayer.R
 import com.sharkaboi.sharkplayer.common.extensions.getSizeString
+import com.sharkaboi.sharkplayer.common.extensions.getTimeString
+import com.sharkaboi.sharkplayer.common.extensions.setThumbnailOf
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.ItemDirectoryFileBinding
 import kotlin.time.DurationUnit
@@ -48,10 +50,7 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
                     binding.ivThumbnail.load(R.drawable.ic_audio_file)
                     binding.tvName.text = item.fileName
                     binding.tvDetails.text = ("${item.quality}\n${
-                        item.length.toString(
-                            unit = DurationUnit.HOURS,
-                            decimals = 0
-                        )
+                        item.length.getTimeString()
                     }\n${item.size.getSizeString()}")
                 }
                 is SharkPlayerFile.Directory -> {
@@ -65,14 +64,14 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
                     binding.tvDetails.text = (item.size.getSizeString())
                 }
                 is SharkPlayerFile.VideoFile -> {
-                    binding.ivThumbnail.load(R.drawable.ic_video_file)
+                    binding.ivThumbnail.setThumbnailOf(item) {
+                        error(R.drawable.ic_video_file)
+                        fallback(R.drawable.ic_video_file)
+                    }
                     binding.tvName.text = item.fileName
                     binding.tvDetails.text =
                         ("${item.resolution}\n${
-                            item.length.toString(
-                                unit = DurationUnit.HOURS,
-                                decimals = 0
-                            )
+                            item.length.getTimeString()
                         }\n${item.size.getSizeString()}")
                 }
             }
@@ -82,7 +81,7 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
 
 private val diffUtilItemCallback = object : DiffUtil.ItemCallback<SharkPlayerFile>() {
     override fun areItemsTheSame(oldItem: SharkPlayerFile, newItem: SharkPlayerFile): Boolean {
-        return oldItem.getIdentifier() == newItem.getIdentifier()
+        return oldItem.getAbsolutePath() == newItem.getAbsolutePath()
     }
 
     override fun areContentsTheSame(

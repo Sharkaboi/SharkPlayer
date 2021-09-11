@@ -1,5 +1,6 @@
 package com.sharkaboi.sharkplayer.di
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
@@ -38,4 +39,9 @@ object DataModule {
     @Singleton
     fun provideDataStoreRepository(dataStore: DataStore<Preferences>): DataStoreRepository =
         DataStoreRepository(dataStore)
+
+    @Provides
+    @Singleton
+    fun provideContentResolver(@ApplicationContext context: Context): ContentResolver =
+        context.contentResolver
 }

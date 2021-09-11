@@ -100,10 +100,10 @@ class DirectoryFragment : Fragment() {
 
     private fun navigateToFile(file: SharkPlayerFile) {
         when (file) {
-            is SharkPlayerFile.AudioFile -> Unit //TODO: play audio file
+            is SharkPlayerFile.AudioFile -> openAudio(file)
             is SharkPlayerFile.Directory -> openDirectory(file)
             is SharkPlayerFile.OtherFile -> showToast(R.string.unsupported_file)
-            is SharkPlayerFile.VideoFile -> Unit //TODO : play video file
+            is SharkPlayerFile.VideoFile -> openVideo(file)
         }
     }
 
@@ -113,6 +113,16 @@ class DirectoryFragment : Fragment() {
 
     private fun openDirectory(file: SharkPlayerFile.Directory) {
         val action = BottomNavGraphDirections.openDirectory(file.path)
+        navController.navigate(action)
+    }
+
+    private fun openVideo(file: SharkPlayerFile.VideoFile) {
+        val action = BottomNavGraphDirections.openVideo(file.path)
+        navController.navigate(action)
+    }
+
+    private fun openAudio(file: SharkPlayerFile.AudioFile) {
+        val action = BottomNavGraphDirections.openAudio(file.path)
         navController.navigate(action)
     }
 }

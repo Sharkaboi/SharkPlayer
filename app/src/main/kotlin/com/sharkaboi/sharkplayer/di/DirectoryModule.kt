@@ -2,7 +2,7 @@ package com.sharkaboi.sharkplayer.di
 
 import com.sharkaboi.sharkplayer.data.datastore.DataStoreRepository
 import com.sharkaboi.sharkplayer.modules.directory.repo.DirectoryRepository
-import com.sharkaboi.sharkplayer.modules.directory.repo.DirectoryRepositoryImpl
+import com.sharkaboi.sharkplayer.modules.directory.repo.FileDirectoryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,5 +14,12 @@ object DirectoryModule {
 
     @Provides
     fun provideDirectoryRepository(dataStoreRepository: DataStoreRepository): DirectoryRepository =
-        DirectoryRepositoryImpl(dataStoreRepository)
+        FileDirectoryRepository(dataStoreRepository)
+
+//    @Provides
+//    fun provideDirectoryRepository(
+//        dataStoreRepository: DataStoreRepository,
+//        contentResolver: ContentResolver
+//    ): DirectoryRepository =
+//        MediaStoreDirectoryRepository(dataStoreRepository, contentResolver)
 }

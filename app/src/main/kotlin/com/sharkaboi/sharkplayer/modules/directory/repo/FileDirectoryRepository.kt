@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 
-class DirectoryRepositoryImpl(
+class FileDirectoryRepository(
     private val dataStoreRepository: DataStoreRepository,
 ) : DirectoryRepository {
 
