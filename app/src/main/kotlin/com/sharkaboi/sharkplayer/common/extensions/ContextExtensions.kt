@@ -38,3 +38,33 @@ internal fun Context.getDefaultDirectories(): List<SharkPlayerFile.Directory> {
         )
     )
 }
+
+internal fun Context.showOneOpDialog(
+    @StringRes titleId: Int,
+    message: String? = null,
+    @StringRes buttonHintId: Int? = null,
+    onClick: () -> Unit = {}
+) {
+    MaterialAlertDialogBuilder(this)
+        .setTitle(titleId)
+        .setMessage(message)
+        .setPositiveButton(buttonHintId ?: android.R.string.ok) { dialog, _ ->
+            onClick()
+            dialog.dismiss()
+        }.show()
+}
+
+internal fun Context.showOneOpDialog(
+    title: String,
+    message: String? = null,
+    @StringRes buttonHintId: Int? = null,
+    onClick: () -> Unit = {}
+) {
+    MaterialAlertDialogBuilder(this)
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(buttonHintId ?: android.R.string.ok) { dialog, _ ->
+            onClick()
+            dialog.dismiss()
+        }.show()
+}

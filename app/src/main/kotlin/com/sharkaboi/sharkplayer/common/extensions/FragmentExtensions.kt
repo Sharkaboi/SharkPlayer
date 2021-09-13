@@ -20,3 +20,14 @@ fun <T> Fragment.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
         action(t)
     }
 }
+
+fun Fragment.openUrl(url: String) {
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+        activity?.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    } catch (e: ActivityNotFoundException) {
+        showToast(getString(R.string.no_browser_found_hint))
+    } catch (e: Exception) {
+        showToast(e.message)
+    }
+}

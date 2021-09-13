@@ -30,7 +30,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         checkPermissions()
         configTheme()
-        openAppFlow()
     }
 
     private fun checkPermissions() {

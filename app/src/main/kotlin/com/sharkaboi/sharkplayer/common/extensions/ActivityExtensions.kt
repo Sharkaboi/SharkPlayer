@@ -20,6 +20,7 @@ internal inline fun <reified T : Activity> Activity.launch(block: Intent.() -> U
     val intent = Intent(this, T::class.java)
     intent.apply(block)
     startActivity(intent)
+    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
 }
 
 internal inline fun <reified T : Activity> Activity.launchAndFinish(block: Intent.() -> Unit = {}) {
@@ -27,6 +28,7 @@ internal inline fun <reified T : Activity> Activity.launchAndFinish(block: Inten
     intent.apply(block)
     startActivity(intent)
     finish()
+    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
 }
 
 internal inline fun <reified T : Activity> Activity.launchAndFinishAffinity(block: Intent.() -> Unit = {}) {
