@@ -75,6 +75,7 @@ dependencies {
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
     implementation "com.google.android.gms:play-services-oss-licenses:$oss_version"
     implementation "com.jakewharton.timber:timber:$timber_version"
+    implementation "com.github.Sharkaboi:AppUpdateChecker:$appupdater_version"
     //testing
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_version"
     testImplementation "junit:junit:$junit_version"

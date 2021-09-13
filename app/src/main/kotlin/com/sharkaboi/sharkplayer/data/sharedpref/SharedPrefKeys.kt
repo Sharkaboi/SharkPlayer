@@ -6,4 +6,6 @@ object SharedPrefKeys {
     const val AUDIO_LANGUAGE = "audioLanguage"
     const val START_PAUSED_VIDEO = "startPausedVideo"
     const val START_PAUSED_AUDIO = "startPausedAudio"
+    const val UPDATES = "updates"
+    const val ABOUT = "about"
 }

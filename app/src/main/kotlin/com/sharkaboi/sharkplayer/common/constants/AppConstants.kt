@@ -23,5 +23,7 @@ object AppConstants {
                 return emptyArray()
             }
         }
-    const val githubLink = "https://github.com/Sharkaboi/SharkPlayer"
+    const val githubUsername = "Sharkaboi"
+    const val githubRepoName = "SharkPlayer"
+    const val githubLink = "https://github.com/$githubUsername/$githubRepoName"
 }

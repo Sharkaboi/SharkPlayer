@@ -13,4 +13,10 @@
     <string name="folder_empty_hint">There are no files in this folder</string>
     <string name="permissions_hint">Please grant the permissions so that the app can work as expected</string>
     <string name="internal_storage_hint">Internal Storage</string>
+    <string name="updates_hint">Check for updates</string>
+    <string name="about">About</string>
+    <string name="update_dialog_title">Update Available %s</string>
+    <string name="open">Open</string>
+    <string name="no_browser_found_hint">No browser found to open the link!</string>
+    <string name="version">v%s</string>
 </resources>

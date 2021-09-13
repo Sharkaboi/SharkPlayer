@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <PreferenceCategory app:title="Appearance">
         <SwitchPreference
@@ -31,5 +32,20 @@
             app:icon="@drawable/ic_paused"
             app:key="startPausedAudio"
             app:title="Start Paused" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/app_name">
+
+        <Preference
+            app:icon="@drawable/ic_update"
+            app:key="updates"
+            app:title="@string/updates_hint" />
+
+        <Preference
+            app:icon="@drawable/ic_info"
+            app:key="about"
+            app:title="@string/about"
+            tools:summary="v1.0" />
+
     </PreferenceCategory>
 </PreferenceScreen>

@@ -22,6 +22,7 @@ buildscript {
         constraint_version = '2.1.0'
         datastore_version = '1.0.0'
         lottie_version = '4.1.0'
+        appupdater_version = 'v1.0.2'
         desugar_version = '1.1.5'
         timber_version = '5.0.1'
         leak_version = '2.7'
@@ -33,7 +34,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
         maven { url "https://plugins.gradle.org/m2/" }
     }
 
