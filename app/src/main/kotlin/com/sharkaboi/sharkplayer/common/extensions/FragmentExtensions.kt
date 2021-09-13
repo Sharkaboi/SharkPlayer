@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import com.sharkaboi.sharkplayer.R
 
-internal fun Fragment.showToast(message: String, length: Int = Toast.LENGTH_SHORT) =
+internal fun Fragment.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) =
     Toast.makeText(context, message, length).show()
 
 internal fun Fragment.showToast(@StringRes id: Int, length: Int = Toast.LENGTH_SHORT) =

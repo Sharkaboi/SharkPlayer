@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import com.sharkaboi.sharkplayer.R
 
-internal fun Activity.showToast(message: String, length: Int = Toast.LENGTH_SHORT) =
+internal fun Activity.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) =
     Toast.makeText(this, message, length).show()
 
 internal fun Activity.showToast(@StringRes id: Int, length: Int = Toast.LENGTH_SHORT) =
@@ -36,6 +36,7 @@ internal inline fun <reified T : Activity> Activity.launchAndFinishAffinity(bloc
     intent.apply(block)
     startActivity(intent)
     finishAffinity()
+    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
 }
 
 fun <T> AppCompatActivity.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {

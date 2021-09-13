@@ -30,7 +30,7 @@
     </fragment>
     <activity
         android:id="@+id/audioPlayerActivity"
-        android:name="com.sharkaboi.sharkplayer.exoplayer.ui.AudioPlayerActivity"
+        android:name="com.sharkaboi.sharkplayer.exoplayer.audio.ui.AudioPlayerActivity"
         android:label="AudioPlayerActivity">
         <argument
             android:name="path"
@@ -38,7 +38,7 @@
     </activity>
     <activity
         android:id="@+id/videoPlayerActivity"
-        android:name="com.sharkaboi.sharkplayer.exoplayer.ui.VideoPlayerActivity"
+        android:name="com.sharkaboi.sharkplayer.exoplayer.video.ui.VideoPlayerActivity"
         android:label="VideoPlayerActivity">
         <argument
             android:name="path"

@@ -15,10 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SharkPlayer">
         <activity
-            android:name=".exoplayer.ui.VideoPlayerActivity"
+            android:name=".exoplayer.video.ui.VideoPlayerActivity"
             android:exported="true" />
         <activity
-            android:name=".exoplayer.ui.AudioPlayerActivity"
+            android:name="com.sharkaboi.sharkplayer.exoplayer.audio.ui.AudioPlayerActivity"
             android:exported="true" />
         <activity
             android:name=".modules.main.ui.MainActivity"

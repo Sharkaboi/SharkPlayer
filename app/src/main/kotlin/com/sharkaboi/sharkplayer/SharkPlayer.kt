@@ -10,7 +10,8 @@ import javax.inject.Inject
 @HiltAndroidApp
 class SharkPlayer : MultiDexApplication() {
 
-    @Inject lateinit var coilImageLoader: ImageLoader
+    @Inject
+    lateinit var coilImageLoader: ImageLoader
 
     override fun onCreate() {
         super.onCreate()
