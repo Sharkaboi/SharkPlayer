@@ -37,6 +37,7 @@ class DirectoryFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        (activity as? AppCompatActivity)?.setSupportActionBar(null)
         binding.rvDirectories.adapter = null
         _binding = null
     }
@@ -81,6 +82,7 @@ class DirectoryFragment : Fragment() {
 
     private fun setupPathTextView() {
         binding.tvPath.text = directoryViewModel.selectedDir.path
+        binding.tvPath.isSelected = true
     }
 
     private fun setupRecyclerView() {

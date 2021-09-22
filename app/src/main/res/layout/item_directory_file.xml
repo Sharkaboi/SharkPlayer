@@ -20,6 +20,7 @@
 
     <TextView
         android:id="@+id/tvName"
+        style="@style/marqueeTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
@@ -49,7 +50,7 @@
         android:layout_height="0dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/more_options"
-        android:padding="8dp"
+        android:padding="16dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"

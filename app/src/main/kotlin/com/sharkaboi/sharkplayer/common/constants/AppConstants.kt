@@ -9,14 +9,14 @@ object AppConstants {
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
 //        Manifest.permission.MEDIA_CONTENT_CONTROL,
 //        Manifest.permission.MODIFY_AUDIO_SETTINGS,
-//        *sdkSpecificPermissions
+        *sdkSpecificPermissions
     )
     private val sdkSpecificPermissions: Array<String>
         get() {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 arrayOf(
-                    Manifest.permission.MANAGE_MEDIA,
-                    Manifest.permission.MANAGE_MEDIA,
+//                    Manifest.permission.MANAGE_MEDIA,
+//                    Manifest.permission.MANAGE_MEDIA,
                     Manifest.permission.MANAGE_EXTERNAL_STORAGE
                 )
             } else {

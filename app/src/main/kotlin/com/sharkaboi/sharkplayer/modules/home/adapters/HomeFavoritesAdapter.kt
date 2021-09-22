@@ -45,6 +45,7 @@ class HomeFavoritesAdapter(
         fun bind(item: SharkPlayerFile.Directory) {
             binding.root.setOnClickListener { onItemClick(item) }
             binding.tvName.text = item.folderName
+            binding.tvName.isSelected = true
             binding.ibMore.setOnClickListener {
                 val menu = PopupMenu(it.context, it)
                 menu.inflate(R.menu.favorites_options_menu)

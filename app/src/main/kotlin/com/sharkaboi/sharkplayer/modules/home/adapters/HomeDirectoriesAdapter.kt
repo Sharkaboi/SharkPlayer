@@ -42,6 +42,7 @@ class HomeDirectoriesAdapter(
         fun bind(item: SharkPlayerFile.Directory) {
             binding.root.setOnClickListener { onItemClick(item) }
             binding.tvName.text = item.folderName
+            binding.tvName.isSelected = true
         }
     }
 }

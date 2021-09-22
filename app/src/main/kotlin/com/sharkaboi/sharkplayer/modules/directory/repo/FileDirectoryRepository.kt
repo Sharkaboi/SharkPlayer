@@ -21,7 +21,7 @@ class FileDirectoryRepository(
         withContext(Dispatchers.IO) {
             return@withContext try {
                 val currentDirectory = File(directory.path)
-                val filesInDir = currentDirectory.listFiles()?.toList() ?: emptyList()
+                val filesInDir = currentDirectory.listFiles().orEmpty()
                 val sharkFiles: List<SharkPlayerFile> = filesInDir.map { it.toSharkPlayerFile() }
                 TaskState.Success(sharkFiles)
             } catch (e: Exception) {

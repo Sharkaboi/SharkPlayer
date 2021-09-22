@@ -13,7 +13,6 @@ import com.sharkaboi.sharkplayer.common.extensions.getTimeString
 import com.sharkaboi.sharkplayer.common.extensions.setThumbnailOf
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.ItemDirectoryFileBinding
-import kotlin.time.DurationUnit
 
 class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
     ListAdapter<SharkPlayerFile, DirectoryAdapter.DirectoryViewHolder>(diffUtilItemCallback) {
@@ -39,6 +38,7 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
     ) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.ibMore.isGone = true
+            binding.tvName.isSelected = true
         }
 
         fun bind(item: SharkPlayerFile) {
