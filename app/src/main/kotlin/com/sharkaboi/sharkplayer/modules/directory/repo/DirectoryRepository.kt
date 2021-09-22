@@ -11,6 +11,8 @@ interface DirectoryRepository {
 
     suspend fun setFolderAsFavorite(directory: SharkPlayerFile.Directory): TaskState<Unit>
 
+    suspend fun removeFolderAsFavorite(directory: SharkPlayerFile.Directory): TaskState<Unit>
+
     suspend fun setSubTrackIndexOfDir(
         trackId: Int,
         directory: SharkPlayerFile.Directory

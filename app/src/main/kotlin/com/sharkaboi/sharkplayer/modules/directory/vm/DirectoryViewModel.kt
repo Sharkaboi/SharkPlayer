@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.common.util.TaskState
 import com.sharkaboi.sharkplayer.modules.directory.repo.DirectoryRepository
-import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -37,10 +36,16 @@ class DirectoryViewModel
         }
     }
 
-    fun setFavorite() {
+    fun toggleFavorite() {
         _uiState.setLoading()
         viewModelScope.launch {
-            when (val result = directoryRepository.setFolderAsFavorite(selectedDir)) {
+            val result =
+                if (isFavorite.value == true) {
+                    directoryRepository.removeFolderAsFavorite(selectedDir)
+                } else {
+                    directoryRepository.setFolderAsFavorite(selectedDir)
+                }
+            when (result) {
                 is TaskState.Failure -> _uiState.setError(result.error)
                 is TaskState.Success -> _uiState.setIdle()
             }

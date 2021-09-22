@@ -81,6 +81,7 @@ class HomeFragment : Fragment() {
 
     private fun setObservers() {
         observe(homeViewModel.favorites) { favorites ->
+            // TODO: 18-09-2021 Remove ripple, add nested scrolling maybe?
             favoritesAdapter.submitList(favorites)
         }
         observe(homeViewModel.uiState) { state ->

@@ -7,8 +7,10 @@ import androidx.navigation.navArgs
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.sharkaboi.sharkplayer.databinding.ActivityVideoPlayerBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
+@AndroidEntryPoint
 class VideoPlayerActivity : AppCompatActivity() {
     private val args: VideoPlayerActivityArgs by navArgs()
     private lateinit var binding: ActivityVideoPlayerBinding

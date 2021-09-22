@@ -1,9 +1,8 @@
 package com.sharkaboi.sharkplayer.modules.directory.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -49,6 +48,20 @@ class DirectoryFragment : Fragment() {
         setObservers()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.directory_options_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.item_add_favorite -> directoryViewModel.toggleFavorite()
+            R.id.item_subtitle_track -> Unit// TODO: 18-09-2021 show subtitle option dialog
+            R.id.item_audio_track -> Unit// TODO: 18-09-2021 show audio option dialog
+            else -> super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
     private fun initViews() {
         setupTitle()
         setupBackButton()
@@ -58,6 +71,8 @@ class DirectoryFragment : Fragment() {
 
     private fun setupTitle() {
         binding.toolbar.title = directoryViewModel.selectedDir.folderName
+        (activity as? AppCompatActivity)?.setSupportActionBar(binding.toolbar)
+        setHasOptionsMenu(true)
     }
 
     private fun setupBackButton() {

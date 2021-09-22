@@ -75,6 +75,17 @@ class MediaStoreDirectoryRepository(
             }
         }
 
+    override suspend fun removeFolderAsFavorite(directory: SharkPlayerFile.Directory): TaskState<Unit> =
+        withContext(Dispatchers.IO) {
+            return@withContext try {
+                dataStoreRepository.removeFavorite(directory)
+                TaskState.Success(Unit)
+            } catch (e: Exception) {
+                Timber.e(e)
+                TaskState.Failure(e)
+            }
+        }
+
     override suspend fun setSubTrackIndexOfDir(
         trackId: Int,
         directory: SharkPlayerFile.Directory
