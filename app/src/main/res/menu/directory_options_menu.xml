@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <item
-        android:id="@+id/item_add_favorite"
-        android:icon="@drawable/ic_favorite_selected"
-        android:title="@string/in_favorites"
-        app:showAsAction="never" />
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_options"
+        android:title=""
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/item_add_favorite"
+                android:icon="@drawable/ic_favorite_selected"
+                android:title="@string/remove_from_favorite"
+                app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/item_subtitle_track"
-        android:icon="@drawable/ic_audio_track"
-        android:title="@string/set_audio_track"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/item_subtitle_track"
+                android:icon="@drawable/ic_audio_track"
+                android:title="@string/set_audio_track"
+                app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/item_audio_track"
-        android:icon="@drawable/ic_subtitle_track"
-        android:title="@string/set_subtitle_track"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/item_audio_track"
+                android:icon="@drawable/ic_subtitle_track"
+                android:title="@string/set_subtitle_track"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
 </menu>

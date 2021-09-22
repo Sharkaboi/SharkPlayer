@@ -3,6 +3,7 @@ package com.sharkaboi.sharkplayer.modules.directory.ui
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -107,7 +108,20 @@ class DirectoryFragment : Fragment() {
             }
         }
         observe(directoryViewModel.isFavorite) { isFavorite ->
-            // TODO: 07-09-2021 set icon based on favorite setting of folder
+            val favoriteItem = binding.toolbar.menu.findItem(R.id.item_add_favorite)
+            if (isFavorite) {
+                favoriteItem?.title = getString(R.string.remove_from_favorite)
+                favoriteItem?.icon = AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_favorite_selected
+                )
+            } else {
+                favoriteItem?.title = getString(R.string.add_to_favorite)
+                favoriteItem?.icon = AppCompatResources.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_add_to_favorite
+                )
+            }
         }
     }
 
