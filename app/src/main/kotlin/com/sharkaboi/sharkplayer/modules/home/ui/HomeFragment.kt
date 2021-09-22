@@ -68,7 +68,7 @@ class HomeFragment : Fragment() {
 
     private fun setupFavoriteDirectoriesList() {
         val rvFavorites = binding.rvFavorites
-        rvFavorites.initLinearDefaults(context, hasFixedSize = true)
+        rvFavorites.initLinearDefaults(context, hasFixedSize = false)
         favoritesAdapter = HomeFavoritesAdapter(
             onItemClick = { item ->
                 openDirectory(item)

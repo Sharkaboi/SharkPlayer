@@ -21,8 +21,7 @@ class HomeViewModel
     fun removeFavorite(favorite: SharkPlayerFile.Directory) {
         _uiState.setLoading()
         viewModelScope.launch {
-            val result = homeRepository.removeFavorite(favorite)
-            when (result) {
+            when (val result = homeRepository.removeFavorite(favorite)) {
                 is TaskState.Failure -> _uiState.setError(result.error)
                 is TaskState.Success -> _uiState.setIdle()
             }
