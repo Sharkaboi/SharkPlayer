@@ -42,9 +42,8 @@ class DataStoreRepository(
     suspend fun removeFavorite(favorite: SharkPlayerFile.Directory): Unit =
         withContext(Dispatchers.IO) {
             dataStore.edit { preferences ->
-                val oldSet: List<SharkPlayerFile.Directory> =
-                    favouritesDirsFlow.firstOrNull() ?: emptyList()
-                val newSet: MutableSet<String> = oldSet.map { it.path }.toMutableSet()
+                val oldSet: Set<String>? = preferences[FAVORITES_KEY]
+                val newSet: MutableSet<String> = oldSet?.toMutableSet() ?: mutableSetOf()
                 newSet.remove(favorite.path)
                 preferences[FAVORITES_KEY] = newSet
             }
@@ -53,9 +52,8 @@ class DataStoreRepository(
     suspend fun addFavorite(favorite: SharkPlayerFile.Directory): Unit =
         withContext(Dispatchers.IO) {
             dataStore.edit { preferences ->
-                val oldSet: List<SharkPlayerFile.Directory> =
-                    favouritesDirsFlow.firstOrNull() ?: emptyList()
-                val newSet: MutableSet<String> = oldSet.map { it.path }.toMutableSet()
+                val oldSet: Set<String>? = preferences[FAVORITES_KEY]
+                val newSet: MutableSet<String> = oldSet?.toMutableSet() ?: mutableSetOf()
                 newSet.add(favorite.path)
                 preferences[FAVORITES_KEY] = newSet
             }
