@@ -13,21 +13,18 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/directory_options_menu"
         app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/white"
-        app:titleTextColor="@color/white"
         tools:title="Downloads" />
 
     <TextView
         android:id="@+id/tvPath"
+        style="@style/marqueeTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/marqueeTextView"
         android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
         app:layout_constraintEnd_toEndOf="parent"

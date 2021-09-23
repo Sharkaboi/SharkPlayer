@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sharkaboi.sharkplayer.R
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.ItemDirectoryFileBinding
+import me.saket.cascade.CascadePopupMenu
 
 class HomeFavoritesAdapter(
     private val onItemClick: (SharkPlayerFile.Directory) -> Unit,
@@ -47,7 +48,7 @@ class HomeFavoritesAdapter(
             binding.tvName.text = item.folderName
             binding.tvName.isSelected = true
             binding.ibMore.setOnClickListener {
-                val menu = PopupMenu(it.context, it)
+                val menu = CascadePopupMenu(it.context, it)
                 menu.inflate(R.menu.favorites_options_menu)
                 menu.setOnMenuItemClickListener { menuItem ->
                     if (menuItem.itemId == R.id.remove_item) {

@@ -57,6 +57,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
     implementation "com.google.android.material:material:$mdc_version"
     implementation "com.airbnb.android:lottie:$lottie_version"
+    implementation "me.saket.cascade:cascade:$cascade_version"
     //exoplayer
     implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
     //ffmpeg
