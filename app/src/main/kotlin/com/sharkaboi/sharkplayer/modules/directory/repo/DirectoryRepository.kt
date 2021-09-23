@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface DirectoryRepository {
     val favorites: Flow<List<SharkPlayerFile.Directory>>
+    val subtitleTrackIndices: Flow<Map<String, Int>>
+    val audioTrackIndices: Flow<Map<String, Int>>
 
     suspend fun getFilesInFolder(directory: SharkPlayerFile.Directory): TaskState<List<SharkPlayerFile>>
 

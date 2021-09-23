@@ -15,11 +15,15 @@ import kotlin.time.Duration
 
 class MediaStoreDirectoryRepository(
     private val dataStoreRepository: DataStoreRepository,
-    private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
 ) : DirectoryRepository {
 
     override val favorites: Flow<List<SharkPlayerFile.Directory>> =
         dataStoreRepository.favouritesDirsFlow
+    override val subtitleTrackIndices: Flow<Map<String, Int>> =
+        dataStoreRepository.subtitleTrackIndices
+    override val audioTrackIndices: Flow<Map<String, Int>> =
+        dataStoreRepository.audioTrackIndices
 
     override suspend fun getFilesInFolder(directory: SharkPlayerFile.Directory): TaskState<List<SharkPlayerFile>> =
         tryCatching {

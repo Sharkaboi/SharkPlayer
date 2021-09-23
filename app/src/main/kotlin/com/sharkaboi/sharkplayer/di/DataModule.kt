@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager
 import com.sharkaboi.sharkplayer.data.datastore.DataStoreRepository
 import com.sharkaboi.sharkplayer.data.datastore.dataStore
 import com.sharkaboi.sharkplayer.data.sharedpref.SharedPrefRepository
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,11 +38,18 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideDataStoreRepository(dataStore: DataStore<Preferences>): DataStoreRepository =
-        DataStoreRepository(dataStore)
+    fun provideDataStoreRepository(
+        dataStore: DataStore<Preferences>,
+        moshi: Moshi
+    ): DataStoreRepository =
+        DataStoreRepository(dataStore, moshi)
 
     @Provides
     @Singleton
     fun provideContentResolver(@ApplicationContext context: Context): ContentResolver =
         context.contentResolver
+
+    @Provides
+    @Singleton
+    fun provideMoshi(): Moshi = Moshi.Builder().build()
 }

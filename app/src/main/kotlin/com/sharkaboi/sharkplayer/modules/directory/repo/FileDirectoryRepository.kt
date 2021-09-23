@@ -14,6 +14,8 @@ class FileDirectoryRepository(
 
     override val favorites: Flow<List<SharkPlayerFile.Directory>> =
         dataStoreRepository.favouritesDirsFlow
+    override val subtitleTrackIndices: Flow<Map<String, Int>> = dataStoreRepository.subtitleTrackIndices
+    override val audioTrackIndices: Flow<Map<String, Int>> = dataStoreRepository.audioTrackIndices
 
     override suspend fun getFilesInFolder(directory: SharkPlayerFile.Directory): TaskState<List<SharkPlayerFile>> =
         tryCatching {
@@ -39,15 +41,17 @@ class FileDirectoryRepository(
     override suspend fun setSubTrackIndexOfDir(
         trackId: Int,
         directory: SharkPlayerFile.Directory
-    ): TaskState<Unit> {
-        TODO("Not yet implemented")
+    ): TaskState<Unit> = tryCatching {
+        dataStoreRepository.setSubTrackIndexOfDir(trackId, directory)
+        TaskState.Success(Unit)
     }
 
     override suspend fun setAudioTrackIndexOfDir(
         trackId: Int,
         directory: SharkPlayerFile.Directory
-    ): TaskState<Unit> {
-        TODO("Not yet implemented")
+    ): TaskState<Unit> = tryCatching {
+        dataStoreRepository.setAudioTrackIndexOfDir(trackId, directory)
+        TaskState.Success(Unit)
     }
 
     override suspend fun doesExist(selectedDir: SharkPlayerFile.Directory): TaskState<Unit> =

@@ -12,6 +12,7 @@ import com.sharkaboi.sharkplayer.BottomNavGraphDirections
 import com.sharkaboi.sharkplayer.R
 import com.sharkaboi.sharkplayer.common.extensions.initLinearDefaults
 import com.sharkaboi.sharkplayer.common.extensions.observe
+import com.sharkaboi.sharkplayer.common.extensions.showIntegerValuePromptDialog
 import com.sharkaboi.sharkplayer.common.extensions.showToast
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.FragmentDirectoryBinding
@@ -19,8 +20,6 @@ import com.sharkaboi.sharkplayer.modules.directory.adapters.DirectoryAdapter
 import com.sharkaboi.sharkplayer.modules.directory.vm.DirectoryState
 import com.sharkaboi.sharkplayer.modules.directory.vm.DirectoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import me.saket.cascade.CascadePopupMenu
-import me.saket.cascade.overrideOverflowMenu
 
 @AndroidEntryPoint
 class DirectoryFragment : Fragment() {
@@ -59,8 +58,6 @@ class DirectoryFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_add_favorite -> directoryViewModel.toggleFavorite()
-            R.id.item_subtitle_track -> Unit// TODO: 18-09-2021 show subtitle option dialog
-            R.id.item_audio_track -> Unit// TODO: 18-09-2021 show audio option dialog
             else -> super.onOptionsItemSelected(item)
         }
         return true
@@ -126,6 +123,20 @@ class DirectoryFragment : Fragment() {
                 )
             }
         }
+        observe(directoryViewModel.subtitleIndexOfDirectory) { subtitleIndex ->
+            val subtitleItem = binding.toolbar.menu.findItem(R.id.item_subtitle_track)
+            subtitleItem.setOnMenuItemClickListener {
+                showSubtitleTrackDialog(subtitleIndex)
+                true
+            }
+        }
+        observe(directoryViewModel.audioIndexOfDirectory) { audioIndex ->
+            val audioItem = binding.toolbar.menu.findItem(R.id.item_audio_track)
+            audioItem.setOnMenuItemClickListener {
+                showAudioTrackDialog(audioIndex)
+                true
+            }
+        }
     }
 
     private fun setListeners() {
@@ -138,6 +149,24 @@ class DirectoryFragment : Fragment() {
             is SharkPlayerFile.Directory -> openDirectory(file)
             is SharkPlayerFile.OtherFile -> showToast(R.string.unsupported_file)
             is SharkPlayerFile.VideoFile -> openVideo(file)
+        }
+    }
+
+    private fun showAudioTrackDialog(defaultValue: Int?) {
+        requireContext().showIntegerValuePromptDialog(
+            titleId = R.string.enter_track_index,
+            defaultValue = defaultValue
+        ) { value ->
+            directoryViewModel.setAudioTrackIndexOfDir(value)
+        }
+    }
+
+    private fun showSubtitleTrackDialog(defaultValue: Int?) {
+        requireContext().showIntegerValuePromptDialog(
+            titleId = R.string.enter_track_index,
+            defaultValue = defaultValue
+        ) { value ->
+            directoryViewModel.setSubTrackIndexOfDir(value)
         }
     }
 

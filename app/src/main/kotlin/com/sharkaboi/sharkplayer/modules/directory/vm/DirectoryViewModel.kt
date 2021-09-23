@@ -21,6 +21,14 @@ class DirectoryViewModel
         directoryRepository.favorites.map { list ->
             list.firstOrNull { it.path == selectedDir.path } != null
         }.asLiveData()
+    val subtitleIndexOfDirectory: LiveData<Int?> =
+        directoryRepository.subtitleTrackIndices.map { subtitleIndices ->
+            subtitleIndices[selectedDir.path]
+        }.asLiveData()
+    val audioIndexOfDirectory: LiveData<Int?> =
+        directoryRepository.audioTrackIndices.map { audioIndices ->
+            audioIndices[selectedDir.path]
+        }.asLiveData()
     private val _uiState = MutableLiveData<DirectoryState>().getDefault()
     val uiState: LiveData<DirectoryState> = _uiState
 
@@ -62,11 +70,23 @@ class DirectoryViewModel
     }
 
     fun setSubTrackIndexOfDir(trackId: Int) {
-        // TODO: 06-09-2021
+        _uiState.setLoading()
+        viewModelScope.launch {
+            when (val result = directoryRepository.setSubTrackIndexOfDir(trackId, selectedDir)) {
+                is TaskState.Failure -> _uiState.setError(result.error)
+                is TaskState.Success -> _uiState.setIdle()
+            }
+        }
     }
 
     fun setAudioTrackIndexOfDir(trackId: Int) {
-        // TODO: 06-09-2021
+        _uiState.setLoading()
+        viewModelScope.launch {
+            when (val result = directoryRepository.setAudioTrackIndexOfDir(trackId, selectedDir)) {
+                is TaskState.Failure -> _uiState.setError(result.error)
+                is TaskState.Success -> _uiState.setIdle()
+            }
+        }
     }
 
     companion object {
