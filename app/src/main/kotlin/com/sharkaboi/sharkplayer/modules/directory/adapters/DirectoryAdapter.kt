@@ -49,9 +49,13 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
                 is SharkPlayerFile.AudioFile -> {
                     binding.ivThumbnail.load(R.drawable.ic_audio_file)
                     binding.tvName.text = item.fileName
-                    binding.tvDetails.text = ("${item.quality}\n${
-                        item.length.getTimeString()
-                    }\n${item.size.getSizeString()}")
+                    binding.tvDetails.text = buildString {
+                        append(item.quality)
+                        append(" - ")
+                        append(item.length.getTimeString())
+                        append(" - ")
+                        append(item.size.getSizeString())
+                    }
                 }
                 is SharkPlayerFile.Directory -> {
                     binding.ivThumbnail.load(R.drawable.ic_directory)
@@ -69,10 +73,13 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
                         fallback(R.drawable.ic_video_file)
                     }
                     binding.tvName.text = item.fileName
-                    binding.tvDetails.text =
-                        ("${item.resolution}\n${
-                            item.length.getTimeString()
-                        }\n${item.size.getSizeString()}")
+                    binding.tvDetails.text = buildString {
+                        append(item.resolution)
+                        append(" - ")
+                        append(item.length.getTimeString())
+                        append(" - ")
+                        append(item.size.getSizeString())
+                    }
                 }
             }
         }

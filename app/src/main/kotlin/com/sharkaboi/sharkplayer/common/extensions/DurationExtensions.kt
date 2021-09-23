@@ -9,8 +9,8 @@ fun Duration.getTimeString(): String {
     val hours = this.inWholeHours.toInt()
     val minutes = this.minus(Duration.hours(hours)).inWholeMinutes
     return if (hours <= 0) {
-        "${minutes}m"
+        "${minutes}min"
     } else {
-        "${hours}h ${minutes}m"
+        "${hours}hr ${minutes}min"
     }
 }
