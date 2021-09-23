@@ -22,4 +22,6 @@ interface DirectoryRepository {
         trackId: Int,
         directory: SharkPlayerFile.Directory
     ): TaskState<Unit>
+
+    suspend fun doesExist(selectedDir: SharkPlayerFile.Directory): TaskState<Unit>
 }

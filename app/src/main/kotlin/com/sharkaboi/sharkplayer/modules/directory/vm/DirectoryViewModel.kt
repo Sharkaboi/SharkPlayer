@@ -29,6 +29,13 @@ class DirectoryViewModel
     private fun loadDirectory() {
         _uiState.setLoading()
         viewModelScope.launch {
+            when (directoryRepository.doesExist(selectedDir)) {
+                is TaskState.Failure -> {
+                    _uiState.setDirectoryNotFound()
+                    return@launch
+                }
+                else -> Unit
+            }
             when (val result = directoryRepository.getFilesInFolder(selectedDir)) {
                 is TaskState.Failure -> _uiState.setError(result.error)
                 is TaskState.Success -> _uiState.setSuccess(result.data)

@@ -20,4 +20,5 @@
     <string name="no_browser_found_hint">No browser found to open the link!</string>
     <string name="version">v%s</string>
     <string name="add_to_favorite">Add favorite</string>
+    <string name="folder_not_found_hint">Folder does not exist.</string>
 </resources>

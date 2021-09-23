@@ -98,6 +98,7 @@ class DirectoryFragment : Fragment() {
     private fun setObservers() {
         observe(directoryViewModel.uiState) { state ->
             binding.progress.isVisible = state is DirectoryState.Loading
+            binding.tvExistHint.isVisible = state is DirectoryState.DirectoryNotFound
             when (state) {
                 is DirectoryState.Failure -> showToast(state.message)
                 is DirectoryState.LoadSuccess -> {
