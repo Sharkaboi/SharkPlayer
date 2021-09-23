@@ -81,7 +81,7 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
 
 private val diffUtilItemCallback = object : DiffUtil.ItemCallback<SharkPlayerFile>() {
     override fun areItemsTheSame(oldItem: SharkPlayerFile, newItem: SharkPlayerFile): Boolean {
-        return oldItem.getAbsolutePath() == newItem.getAbsolutePath()
+        return oldItem.absolutePath == newItem.absolutePath
     }
 
     override fun areContentsTheSame(

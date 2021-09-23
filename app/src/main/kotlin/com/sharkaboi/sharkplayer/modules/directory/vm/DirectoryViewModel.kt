@@ -18,7 +18,9 @@ class DirectoryViewModel
     private val path = savedStateHandle.get<String>(PATH_KEY)
     val selectedDir = SharkPlayerFile.directoryFromPath(path)
     val isFavorite: LiveData<Boolean> =
-        directoryRepository.favorites.map { it.contains(selectedDir) }.asLiveData()
+        directoryRepository.favorites.map { list ->
+            list.firstOrNull { it.path == selectedDir.path } != null
+        }.asLiveData()
     private val _uiState = MutableLiveData<DirectoryState>().getDefault()
     val uiState: LiveData<DirectoryState> = _uiState
 

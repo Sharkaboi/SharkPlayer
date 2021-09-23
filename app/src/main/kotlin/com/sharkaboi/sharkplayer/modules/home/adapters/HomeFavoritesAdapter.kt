@@ -67,7 +67,7 @@ private val diffUtilItemCallback = object : DiffUtil.ItemCallback<SharkPlayerFil
         oldItem: SharkPlayerFile.Directory,
         newItem: SharkPlayerFile.Directory
     ): Boolean {
-        return oldItem.getAbsolutePath() == newItem.getAbsolutePath()
+        return oldItem.absolutePath == newItem.absolutePath
     }
 
     override fun areContentsTheSame(

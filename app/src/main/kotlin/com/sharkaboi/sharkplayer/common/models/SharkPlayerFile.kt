@@ -34,14 +34,15 @@ sealed class SharkPlayerFile {
         val size: Long
     ) : SharkPlayerFile()
 
-    fun getAbsolutePath(): String {
-        return when (this) {
-            is Directory -> this.path
-            is VideoFile -> this.path
-            is AudioFile -> this.path
-            is OtherFile -> this.path
+    val absolutePath: String
+        get() {
+            return when (this) {
+                is Directory -> this.path
+                is VideoFile -> this.path
+                is AudioFile -> this.path
+                is OtherFile -> this.path
+            }
         }
-    }
 
     fun getFile(): File {
         return when (this) {
