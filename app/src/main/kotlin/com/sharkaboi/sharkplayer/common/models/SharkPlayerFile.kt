@@ -44,6 +44,16 @@ sealed class SharkPlayerFile {
             }
         }
 
+    val sortField: String
+        get() {
+            return when (this) {
+                is Directory -> this.folderName.lowercase()
+                is VideoFile -> this.fileName.lowercase()
+                is AudioFile -> this.fileName.lowercase()
+                is OtherFile -> this.fileName.lowercase()
+            }
+        }
+
     fun getFile(): File {
         return when (this) {
             is Directory -> File(this.path)

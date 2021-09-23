@@ -19,7 +19,8 @@ class FileDirectoryRepository(
         tryCatching {
             val currentDirectory = File(directory.path)
             val filesInDir = currentDirectory.listFiles().orEmpty()
-            val sharkFiles: List<SharkPlayerFile> = filesInDir.map { it.toSharkPlayerFile() }
+            val sharkFiles: List<SharkPlayerFile> =
+                filesInDir.map { it.toSharkPlayerFile() }.sortedBy { it.sortField }
             TaskState.Success(sharkFiles)
         }
 
