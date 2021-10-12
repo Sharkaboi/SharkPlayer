@@ -22,10 +22,13 @@
         android:theme="@style/Theme.SharkPlayer">
         <activity
             android:name=".exoplayer.video.ui.VideoPlayerActivity"
-            android:exported="true" />
+            android:configChanges="orientation|uiMode"
+            android:exported="true"
+            android:theme="@style/Theme.SharkPlayer.Video" />
         <activity
             android:name="com.sharkaboi.sharkplayer.exoplayer.audio.ui.AudioPlayerActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.SharkPlayer.Audio" />
         <activity
             android:name=".modules.main.ui.MainActivity"
             android:exported="true" />

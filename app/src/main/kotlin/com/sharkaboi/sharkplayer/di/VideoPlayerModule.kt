@@ -1,5 +1,6 @@
 package com.sharkaboi.sharkplayer.di
 
+import com.sharkaboi.sharkplayer.data.datastore.DataStoreRepository
 import com.sharkaboi.sharkplayer.data.sharedpref.SharedPrefRepository
 import com.sharkaboi.sharkplayer.exoplayer.video.repo.VideoPlayerRepository
 import dagger.Module
@@ -12,6 +13,8 @@ import dagger.hilt.android.components.ViewModelComponent
 object VideoPlayerModule {
 
     @Provides
-    fun provideVideoPlayerRepository(sharedPrefRepository: SharedPrefRepository) =
-        VideoPlayerRepository(sharedPrefRepository)
+    fun provideVideoPlayerRepository(
+        sharedPrefRepository: SharedPrefRepository,
+        dataStoreRepository: DataStoreRepository
+    ) = VideoPlayerRepository(sharedPrefRepository, dataStoreRepository)
 }

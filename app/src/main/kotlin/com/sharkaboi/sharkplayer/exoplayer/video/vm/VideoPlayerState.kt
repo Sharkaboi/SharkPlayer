@@ -1,10 +1,7 @@
 package com.sharkaboi.sharkplayer.exoplayer.video.vm
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.sharkaboi.sharkplayer.common.extensions.emptyString
-import com.sharkaboi.sharkplayer.exoplayer.util.AudioOptions
-import com.sharkaboi.sharkplayer.exoplayer.util.SubtitleOptions
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
 
 sealed class VideoPlayerState {

@@ -5,17 +5,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityRetainedComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 
-@InstallIn(SingletonComponent::class)
+@InstallIn(ActivityRetainedComponent::class)
 @Module
 object ExoPlayerModule {
 
-    @Provides
-    @Singleton
-    fun provideExoPlayer(@ApplicationContext context: Context): SimpleExoPlayer {
-        return SimpleExoPlayer.Builder(context).build()
-    }
 }

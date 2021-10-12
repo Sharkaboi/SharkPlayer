@@ -24,4 +24,5 @@
     <string name="enter_value">Enter value</string>
     <string name="invalid_track_index">Invalid track index</string>
     <string name="enter_track_index">Enter Track Index</string>
+    <string name="audio">Audio</string>
 </resources>

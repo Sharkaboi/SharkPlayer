@@ -2,6 +2,7 @@ package com.sharkaboi.sharkplayer.modules.directory.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -47,7 +48,10 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
             }
             when (item) {
                 is SharkPlayerFile.AudioFile -> {
-                    binding.ivThumbnail.load(R.drawable.ic_audio_file)
+                    binding.ivThumbnail.load(item.path.toUri()) {
+                        error(R.drawable.ic_audio_file)
+                        fallback(R.drawable.ic_audio_file)
+                    }
                     binding.tvName.text = item.fileName
                     binding.tvDetails.text = buildString {
                         append(item.quality)

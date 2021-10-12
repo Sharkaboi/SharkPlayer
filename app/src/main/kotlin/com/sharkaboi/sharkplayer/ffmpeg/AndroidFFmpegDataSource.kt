@@ -33,7 +33,6 @@ class AndroidFFmpegDataSource(
 
     override fun killProcess(): Boolean = fFmpeg.killRunningProcesses()
 
-
     override fun setTimeout(timeout: Long) = fFmpeg.setTimeout(timeout)
 
     override suspend fun execute(command: Array<String>): TaskState<String> {

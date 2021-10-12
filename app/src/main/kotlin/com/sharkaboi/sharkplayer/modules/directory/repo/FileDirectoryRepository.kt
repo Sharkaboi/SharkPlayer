@@ -14,7 +14,8 @@ class FileDirectoryRepository(
 
     override val favorites: Flow<List<SharkPlayerFile.Directory>> =
         dataStoreRepository.favouritesDirsFlow
-    override val subtitleTrackIndices: Flow<Map<String, Int>> = dataStoreRepository.subtitleTrackIndices
+    override val subtitleTrackIndices: Flow<Map<String, Int>> =
+        dataStoreRepository.subtitleTrackIndices
     override val audioTrackIndices: Flow<Map<String, Int>> = dataStoreRepository.audioTrackIndices
 
     override suspend fun getFilesInFolder(directory: SharkPlayerFile.Directory): TaskState<List<SharkPlayerFile>> =
@@ -22,7 +23,9 @@ class FileDirectoryRepository(
             val currentDirectory = File(directory.path)
             val filesInDir = currentDirectory.listFiles().orEmpty()
             val sharkFiles: List<SharkPlayerFile> =
-                filesInDir.map { it.toSharkPlayerFile() }.sortedBy { it.sortField }
+                filesInDir.map { it.toSharkPlayerFile() }
+                    .sortedBy { it.sortField }
+                    .sortedBy { it !is SharkPlayerFile.Directory }
             TaskState.Success(sharkFiles)
         }
 

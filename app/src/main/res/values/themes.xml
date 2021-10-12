@@ -22,6 +22,16 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <style name="Theme.SharkPlayer.Video" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.SharkPlayer.Audio" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor" tools:targetApi="l">@color/colorDark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
     <style name="Theme.SharkPlayer.Splash">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>

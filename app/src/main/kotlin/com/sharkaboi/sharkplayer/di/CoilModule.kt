@@ -29,8 +29,8 @@ object CoilModule {
                 add(VideoFrameUriFetcher(context))
                 add(VideoFrameDecoder(context))
             }.apply {
-                if (BuildConfig.DEBUG) {
-                    logger(DebugLogger())
-                }
+//                if (BuildConfig.DEBUG) {
+//                    logger(DebugLogger())
+//                }
             }.build()
 }
