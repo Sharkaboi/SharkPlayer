@@ -17,7 +17,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:show_buffering="never"
-        app:show_shuffle_button="true" />
+        app:show_shuffle_button="true"
+        app:show_subtitle_button="true" />
 
     <ProgressBar
         android:id="@+id/progress"

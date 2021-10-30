@@ -5,7 +5,7 @@ import com.sharkaboi.sharkplayer.exoplayer.util.AudioOptions
 import com.sharkaboi.sharkplayer.exoplayer.util.SubtitleOptions
 
 data class VideoInfo(
-    val videoUri: Uri,
+    val videoUris: List<Uri>,
     val subtitleOptions: SubtitleOptions,
     val audioOptions: AudioOptions
 )

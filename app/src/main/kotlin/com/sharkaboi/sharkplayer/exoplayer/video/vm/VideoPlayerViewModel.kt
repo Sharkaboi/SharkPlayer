@@ -3,8 +3,8 @@ package com.sharkaboi.sharkplayer.exoplayer.video.vm
 import androidx.lifecycle.*
 import com.sharkaboi.sharkplayer.common.util.TaskState
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
+import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs
 import com.sharkaboi.sharkplayer.exoplayer.video.repo.VideoPlayerRepository
-import com.sharkaboi.sharkplayer.modules.directory.vm.DirectoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,24 +16,24 @@ constructor(
     savedStateHandle: SavedStateHandle,
     private val videoPlayerRepository: VideoPlayerRepository
 ) : ViewModel() {
-    private val path = savedStateHandle.get<String>(DirectoryViewModel.PATH_KEY)
+    private val videoNavArgs = savedStateHandle.get<VideoNavArgs>(VIDEO_NAV_ARGS_KEY)
     private val _uiState = MutableLiveData<VideoPlayerState>().getDefault()
     val uiState: LiveData<VideoPlayerState> = _uiState
     private val _playbackState = MutableLiveData<VideoPlayBackState>()
     val playbackState: LiveData<VideoPlayBackState> = _playbackState
 
     init {
-        if (path == null) {
+        if (videoNavArgs == null || videoNavArgs.videoPaths.isEmpty()) {
             _uiState.setInvalidData("Path was null")
         } else {
-            loadVideoMetadata(path)
+            loadVideoMetadata(videoNavArgs)
         }
     }
 
-    private fun loadVideoMetadata(path: String) {
+    private fun loadVideoMetadata(videoNavArgs: VideoNavArgs) {
         _uiState.setLoading()
         viewModelScope.launch {
-            when (val result = videoPlayerRepository.getMetaDataOf(path)) {
+            when (val result = videoPlayerRepository.getMetaDataOf(videoNavArgs)) {
                 is TaskState.Failure -> _uiState.setError(result.error)
                 is TaskState.Success -> _uiState.setSuccess(result.data)
             }
@@ -51,6 +51,6 @@ constructor(
     }
 
     companion object {
-        const val PATH_KEY = "path"
+        const val VIDEO_NAV_ARGS_KEY = "videoNavArgs"
     }
 }

@@ -10,20 +10,22 @@ import com.sharkaboi.sharkplayer.exoplayer.util.AudioOptions
 import com.sharkaboi.sharkplayer.exoplayer.util.SUBTITLE_LANGUAGE_SEPARATOR
 import com.sharkaboi.sharkplayer.exoplayer.util.SubtitleOptions
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
+import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs
 import kotlinx.coroutines.flow.firstOrNull
 
 class VideoPlayerRepository(
     private val sharedPrefRepository: SharedPrefRepository,
     private val dataStoreRepository: DataStoreRepository,
 ) {
-    suspend fun getMetaDataOf(path: String): TaskState<VideoInfo> =
+    suspend fun getMetaDataOf(videoNavArgs: VideoNavArgs): TaskState<VideoInfo> =
         tryCatching {
+            val dirPath = videoNavArgs.dirPath
             val subtitleLanguageOptions = sharedPrefRepository.getSubtitleLanguages()
             val subtitleIndexOptions =
-                dataStoreRepository.subtitleTrackIndices.firstOrNull()?.get(path)
+                dataStoreRepository.subtitleTrackIndices.firstOrNull()?.get(dirPath)
             val audioLanguageOptions = sharedPrefRepository.getAudioLanguages()
             val audioIndexOptions =
-                dataStoreRepository.audioTrackIndices.firstOrNull()?.get(path)
+                dataStoreRepository.audioTrackIndices.firstOrNull()?.get(dirPath)
             val subtitleOptions: SubtitleOptions = when {
                 subtitleIndexOptions != null -> SubtitleOptions.WithTrackId(subtitleIndexOptions)
                 subtitleLanguageOptions != null -> {
@@ -44,7 +46,7 @@ class VideoPlayerRepository(
             }
             TaskState.Success(
                 VideoInfo(
-                    videoUri = path.toUri(),
+                    videoUris = videoNavArgs.videoPaths.map(String::toUri),
                     subtitleOptions = subtitleOptions,
                     audioOptions = audioOptions
                 )

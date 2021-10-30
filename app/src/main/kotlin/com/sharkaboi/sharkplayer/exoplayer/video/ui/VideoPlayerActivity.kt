@@ -6,11 +6,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
-import androidx.navigation.navArgs
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.sharkaboi.sharkplayer.common.extensions.observe
+import com.sharkaboi.sharkplayer.common.extensions.setVideosAsPlayList
 import com.sharkaboi.sharkplayer.common.extensions.showToast
 import com.sharkaboi.sharkplayer.databinding.ActivityVideoPlayerBinding
 import com.sharkaboi.sharkplayer.exoplayer.util.AudioOptions
@@ -20,11 +19,9 @@ import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayBackState
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerState
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class VideoPlayerActivity : AppCompatActivity() {
-    private val args: VideoPlayerActivityArgs by navArgs()
     private lateinit var binding: ActivityVideoPlayerBinding
     private lateinit var player: SimpleExoPlayer
     private val videoPlayerViewModel by viewModels<VideoPlayerViewModel>()
@@ -44,7 +41,7 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     private fun initViews() {
         WindowCompat.setDecorFitsSystemWindows(window,false)
-        binding.playerView.setShowSubtitleButton(true)
+//        binding.playerView.setShowSubtitleButton(true)
     }
 
     private fun setObservers() {
@@ -84,8 +81,7 @@ class VideoPlayerActivity : AppCompatActivity() {
         trackSelector.setParameters(builder)
         player = SimpleExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
         binding.playerView.player = player
-        val mediaItem: MediaItem = MediaItem.fromUri(videoInfo.videoUri)
-        player.setMediaItem(mediaItem)
+        player.setVideosAsPlayList(videoInfo.videoUris)
         player.prepare()
         player.play()
     }

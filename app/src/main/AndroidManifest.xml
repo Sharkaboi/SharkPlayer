@@ -22,11 +22,12 @@
         android:theme="@style/Theme.SharkPlayer">
         <activity
             android:name=".exoplayer.video.ui.VideoPlayerActivity"
-            android:configChanges="orientation|uiMode"
+            android:configChanges="screenSize|keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true"
             android:theme="@style/Theme.SharkPlayer.Video" />
         <activity
             android:name="com.sharkaboi.sharkplayer.exoplayer.audio.ui.AudioPlayerActivity"
+            android:configChanges="screenSize|keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true"
             android:theme="@style/Theme.SharkPlayer.Audio" />
         <activity

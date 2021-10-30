@@ -41,8 +41,8 @@
         android:name="com.sharkaboi.sharkplayer.exoplayer.video.ui.VideoPlayerActivity"
         android:label="VideoPlayerActivity">
         <argument
-            android:name="path"
-            app:argType="string" />
+            android:name="videoNavArgs"
+            app:argType="com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs" />
     </activity>
 
     <!--Global actions-->
@@ -54,7 +54,7 @@
         app:popEnterAnim="@anim/fade_in"
         app:popExitAnim="@anim/fade_out" />
     <action
-        android:id="@+id/openVideo"
+        android:id="@+id/openVideos"
         app:destination="@id/videoPlayerActivity"
         app:enterAnim="@anim/fade_in"
         app:exitAnim="@anim/fade_out"

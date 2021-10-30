@@ -16,6 +16,7 @@ import com.sharkaboi.sharkplayer.common.extensions.showIntegerValuePromptDialog
 import com.sharkaboi.sharkplayer.common.extensions.showToast
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.FragmentDirectoryBinding
+import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs
 import com.sharkaboi.sharkplayer.modules.directory.adapters.DirectoryAdapter
 import com.sharkaboi.sharkplayer.modules.directory.vm.DirectoryState
 import com.sharkaboi.sharkplayer.modules.directory.vm.DirectoryViewModel
@@ -47,7 +48,6 @@ class DirectoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        setListeners()
         setObservers()
     }
 
@@ -103,6 +103,7 @@ class DirectoryFragment : Fragment() {
                 is DirectoryState.LoadSuccess -> {
                     binding.tvEmptyHint.isVisible = state.files.isEmpty()
                     directoryAdapter.submitList(state.files)
+                    setPlayListListener(state.files)
                 }
                 else -> Unit
             }
@@ -139,10 +140,6 @@ class DirectoryFragment : Fragment() {
         }
     }
 
-    private fun setListeners() {
-        binding.fabPlay.setOnClickListener { openAsPlaylist() }
-    }
-
     private fun navigateToFile(file: SharkPlayerFile) {
         when (file) {
             is SharkPlayerFile.AudioFile -> openAudio(file)
@@ -170,8 +167,19 @@ class DirectoryFragment : Fragment() {
         }
     }
 
-    private fun openAsPlaylist() {
-        //TODO("Not yet implemented")
+    private fun setPlayListListener(files: List<SharkPlayerFile>) {
+        val videoPaths = files.filterIsInstance<SharkPlayerFile.VideoFile>().map { it.path }
+        binding.fabPlay.setOnClickListener { openAsPlaylist(videoPaths) }
+    }
+
+    private fun openAsPlaylist(videoPaths: List<String>) {
+        val action = BottomNavGraphDirections.openVideos(
+            videoNavArgs = VideoNavArgs(
+                dirPath = directoryViewModel.selectedDir.path,
+                videoPaths = videoPaths
+            )
+        )
+        navController.navigate(action)
     }
 
     private fun openDirectory(file: SharkPlayerFile.Directory) {
@@ -180,7 +188,12 @@ class DirectoryFragment : Fragment() {
     }
 
     private fun openVideo(file: SharkPlayerFile.VideoFile) {
-        val action = BottomNavGraphDirections.openVideo(file.path)
+        val action = BottomNavGraphDirections.openVideos(
+            videoNavArgs = VideoNavArgs(
+                dirPath = directoryViewModel.selectedDir.path,
+                videoPaths = listOf(file.path)
+            )
+        )
         navController.navigate(action)
     }
 
