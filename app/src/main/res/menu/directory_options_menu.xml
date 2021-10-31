@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/action_more"
         android:icon="@drawable/ic_more_options"
@@ -9,9 +10,9 @@
         <menu>
             <item
                 android:id="@+id/item_add_favorite"
-                android:icon="@drawable/ic_favorite_selected"
+                app:showAsAction="ifRoom"
                 android:title="@string/remove_from_favorite"
-                app:showAsAction="ifRoom" />
+                tools:icon="@drawable/ic_favorite_selected" />
 
             <item
                 android:id="@+id/item_subtitle_track"

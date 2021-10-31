@@ -22,10 +22,9 @@ class FileDirectoryRepository(
         tryCatching {
             val currentDirectory = File(directory.path)
             val filesInDir = currentDirectory.listFiles().orEmpty()
-            val sharkFiles: List<SharkPlayerFile> =
-                filesInDir.map { it.toSharkPlayerFile() }
-                    .sortedBy { it.sortField }
-                    .sortedBy { it !is SharkPlayerFile.Directory }
+            val sharkFiles: List<SharkPlayerFile> = filesInDir.map {
+                it.toSharkPlayerFile()
+            }.sortedWith(compareBy({ it !is SharkPlayerFile.Directory }, { it.sortField }))
             TaskState.Success(sharkFiles)
         }
 

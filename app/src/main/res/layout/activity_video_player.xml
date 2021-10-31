@@ -18,7 +18,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:show_buffering="never"
         app:show_shuffle_button="true"
-        app:show_subtitle_button="true" />
+        app:show_subtitle_button="true"
+        app:surface_type="surface_view" />
 
     <ProgressBar
         android:id="@+id/progress"
@@ -29,4 +30,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvFileName"
+        style="@style/marqueeTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="32dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        tools:text="Attack on Titan" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

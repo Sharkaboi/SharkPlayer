@@ -78,15 +78,17 @@ class MediaStoreDirectoryRepository(
     override suspend fun setSubTrackIndexOfDir(
         trackId: Int,
         directory: SharkPlayerFile.Directory
-    ): TaskState<Unit> {
-        TODO("Not yet implemented")
+    ): TaskState<Unit> = tryCatching {
+        dataStoreRepository.setSubTrackIndexOfDir(trackId, directory)
+        TaskState.Success(Unit)
     }
 
     override suspend fun setAudioTrackIndexOfDir(
         trackId: Int,
         directory: SharkPlayerFile.Directory
-    ): TaskState<Unit> {
-        TODO("Not yet implemented")
+    ): TaskState<Unit> = tryCatching {
+        dataStoreRepository.setAudioTrackIndexOfDir(trackId, directory)
+        TaskState.Success(Unit)
     }
 
     override suspend fun doesExist(selectedDir: SharkPlayerFile.Directory): TaskState<Unit> =

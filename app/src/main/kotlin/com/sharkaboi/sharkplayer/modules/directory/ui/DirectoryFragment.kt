@@ -40,6 +40,7 @@ class DirectoryFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        activity?.invalidateOptionsMenu()
         (activity as? AppCompatActivity)?.setSupportActionBar(null)
         binding.rvDirectories.adapter = null
         _binding = null
@@ -53,6 +54,20 @@ class DirectoryFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.directory_options_menu, menu)
+        val favoriteItem = menu.findItem(R.id.item_add_favorite)
+        if (directoryViewModel.isFavorite.value == true) {
+            favoriteItem?.title = getString(R.string.remove_from_favorite)
+            favoriteItem?.icon = AppCompatResources.getDrawable(
+                requireContext(),
+                R.drawable.ic_favorite_selected
+            )
+        } else {
+            favoriteItem?.title = getString(R.string.add_to_favorite)
+            favoriteItem?.icon = AppCompatResources.getDrawable(
+                requireContext(),
+                R.drawable.ic_add_to_favorite
+            )
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -100,29 +115,16 @@ class DirectoryFragment : Fragment() {
             binding.tvExistHint.isVisible = state is DirectoryState.DirectoryNotFound
             when (state) {
                 is DirectoryState.Failure -> showToast(state.message)
-                is DirectoryState.LoadSuccess -> {
-                    binding.tvEmptyHint.isVisible = state.files.isEmpty()
-                    directoryAdapter.submitList(state.files)
-                    setPlayListListener(state.files)
-                }
                 else -> Unit
             }
         }
-        observe(directoryViewModel.isFavorite) { isFavorite ->
-            val favoriteItem = binding.toolbar.menu.findItem(R.id.item_add_favorite)
-            if (isFavorite) {
-                favoriteItem?.title = getString(R.string.remove_from_favorite)
-                favoriteItem?.icon = AppCompatResources.getDrawable(
-                    requireContext(),
-                    R.drawable.ic_favorite_selected
-                )
-            } else {
-                favoriteItem?.title = getString(R.string.add_to_favorite)
-                favoriteItem?.icon = AppCompatResources.getDrawable(
-                    requireContext(),
-                    R.drawable.ic_add_to_favorite
-                )
-            }
+        observe(directoryViewModel.isFavorite) {
+            activity?.invalidateOptionsMenu()
+        }
+        observe(directoryViewModel.files) { files ->
+            binding.tvEmptyHint.isVisible = files.isEmpty()
+            directoryAdapter.submitList(files)
+            setPlayListListener(files)
         }
         observe(directoryViewModel.subtitleIndexOfDirectory) { subtitleIndex ->
             val subtitleItem = binding.toolbar.menu.findItem(R.id.item_subtitle_track)
@@ -173,6 +175,11 @@ class DirectoryFragment : Fragment() {
     }
 
     private fun openAsPlaylist(videoPaths: List<String>) {
+        if (videoPaths.isEmpty()) {
+            showToast(R.string.no_videos_in_folder)
+            return
+        }
+
         val action = BottomNavGraphDirections.openVideos(
             videoNavArgs = VideoNavArgs(
                 dirPath = directoryViewModel.selectedDir.path,

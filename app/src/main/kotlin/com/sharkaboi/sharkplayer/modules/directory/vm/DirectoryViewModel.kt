@@ -17,20 +17,27 @@ class DirectoryViewModel
 ) : ViewModel() {
     private val path = savedStateHandle.get<String>(PATH_KEY)
     val selectedDir = SharkPlayerFile.directoryFromPath(path)
+
     val isFavorite: LiveData<Boolean> =
         directoryRepository.favorites.map { list ->
             list.firstOrNull { it.path == selectedDir.path } != null
         }.asLiveData()
+
     val subtitleIndexOfDirectory: LiveData<Int?> =
         directoryRepository.subtitleTrackIndices.map { subtitleIndices ->
             subtitleIndices[selectedDir.path]
         }.asLiveData()
+
     val audioIndexOfDirectory: LiveData<Int?> =
         directoryRepository.audioTrackIndices.map { audioIndices ->
             audioIndices[selectedDir.path]
         }.asLiveData()
+
     private val _uiState = MutableLiveData<DirectoryState>().getDefault()
     val uiState: LiveData<DirectoryState> = _uiState
+
+    private val _files = MutableLiveData<List<SharkPlayerFile>>()
+    val files: LiveData<List<SharkPlayerFile>> = _files
 
     init {
         loadDirectory()
@@ -48,7 +55,10 @@ class DirectoryViewModel
             }
             when (val result = directoryRepository.getFilesInFolder(selectedDir)) {
                 is TaskState.Failure -> _uiState.setError(result.error)
-                is TaskState.Success -> _uiState.setSuccess(result.data)
+                is TaskState.Success -> {
+                    _files.value = result.data
+                    _uiState.setIdle()
+                }
             }
         }
     }
@@ -64,7 +74,7 @@ class DirectoryViewModel
                 }
             when (result) {
                 is TaskState.Failure -> _uiState.setError(result.error)
-                is TaskState.Success -> _uiState.setIdle()
+                else -> _uiState.setIdle()
             }
         }
     }
