@@ -26,4 +26,6 @@ interface DirectoryRepository {
     ): TaskState<Unit>
 
     suspend fun doesExist(selectedDir: SharkPlayerFile.Directory): TaskState<Unit>
+
+    suspend fun deleteVideo(videoFile: SharkPlayerFile.VideoFile): TaskState<Unit>
 }

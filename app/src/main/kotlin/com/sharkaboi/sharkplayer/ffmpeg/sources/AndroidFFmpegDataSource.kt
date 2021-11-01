@@ -1,22 +1,25 @@
-package com.sharkaboi.sharkplayer.ffmpeg
+package com.sharkaboi.sharkplayer.ffmpeg.sources
 
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException
 import com.sharkaboi.sharkplayer.common.util.TaskState
+import com.sharkaboi.sharkplayer.ffmpeg.FFMpegDataSource
+import com.sharkaboi.sharkplayer.ffmpeg.command.FFMpegCommand
+import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class AndroidFFmpegDataSource(
-    private val fFmpeg: FFmpeg
+    private val ffmpeg: FFmpeg
 ) : FFMpegDataSource {
-    override val isRunning: Boolean get() = fFmpeg.isFFmpegCommandRunning
+    override val isRunning: Boolean get() = ffmpeg.isFFmpegCommandRunning
 
     override suspend fun loadBinary(): TaskState<Unit> {
         return suspendCoroutine { continuation ->
             try {
-                fFmpeg.loadBinary(object : LoadBinaryResponseHandler() {
+                ffmpeg.loadBinary(object : LoadBinaryResponseHandler() {
                     override fun onFailure() {
                         continuation.resume(TaskState.failureWithMessage("FFmpeg failure"))
                     }
@@ -31,16 +34,22 @@ class AndroidFFmpegDataSource(
         }
     }
 
-    override fun killProcess(): Boolean = fFmpeg.killRunningProcesses()
+    override fun killProcess(): Boolean = ffmpeg.killRunningProcesses()
 
-    override fun setTimeout(timeout: Long) = fFmpeg.setTimeout(timeout)
+    override fun setTimeout(timeout: Long) = ffmpeg.setTimeout(timeout)
 
-    override suspend fun execute(command: Array<String>): TaskState<String> {
+    override suspend fun execute(
+        command: FFMpegCommand
+    ): TaskState<String> {
         return suspendCoroutine { continuation ->
             try {
-                fFmpeg.execute(command, object : ExecuteBinaryResponseHandler() {
+                ffmpeg.execute(command, object : ExecuteBinaryResponseHandler() {
                     override fun onStart() {}
-                    override fun onProgress(message: String) {}
+
+                    override fun onProgress(message: String) {
+                        Timber.d(message)
+                    }
+
                     override fun onFailure(message: String) {
                         continuation.resume(TaskState.failureWithMessage(message))
                     }

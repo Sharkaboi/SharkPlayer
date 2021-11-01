@@ -65,4 +65,19 @@ class FileDirectoryRepository(
                 TaskState.failureWithMessage("Directory does not exist.")
             }
         }
+
+    override suspend fun deleteVideo(videoFile: SharkPlayerFile.VideoFile): TaskState<Unit> =
+        tryCatching {
+            val file = videoFile.getFile()
+            if (!file.exists()) {
+                return@tryCatching TaskState.failureWithMessage("Video file does not exist.")
+            }
+
+            val isSuccess = file.delete()
+            if (!isSuccess) {
+                return@tryCatching TaskState.failureWithMessage("Couldn't delete video file.")
+            }
+
+            TaskState.Success(Unit)
+        }
 }

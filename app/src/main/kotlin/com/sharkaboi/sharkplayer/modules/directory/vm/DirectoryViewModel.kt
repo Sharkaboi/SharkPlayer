@@ -1,8 +1,16 @@
 package com.sharkaboi.sharkplayer.modules.directory.vm
 
+import android.app.Application
 import androidx.lifecycle.*
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import com.sharkaboi.sharkplayer.R
+import com.sharkaboi.sharkplayer.SharkPlayer
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.common.util.TaskState
+import com.sharkaboi.sharkplayer.ffmpeg.command.FFMpegCommandWrapper
+import com.sharkaboi.sharkplayer.ffmpeg.workers.FFMpegWorker
 import com.sharkaboi.sharkplayer.modules.directory.repo.DirectoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
@@ -12,9 +20,10 @@ import javax.inject.Inject
 @HiltViewModel
 class DirectoryViewModel
 @Inject constructor(
+    app: Application,
     private val directoryRepository: DirectoryRepository,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : AndroidViewModel(app) {
     private val path = savedStateHandle.get<String>(PATH_KEY)
     val selectedDir = SharkPlayerFile.directoryFromPath(path)
 
@@ -95,6 +104,53 @@ class DirectoryViewModel
             when (val result = directoryRepository.setAudioTrackIndexOfDir(trackId, selectedDir)) {
                 is TaskState.Failure -> _uiState.setError(result.error)
                 is TaskState.Success -> _uiState.setIdle()
+            }
+        }
+    }
+
+    fun runRescaleWork(videoFile: SharkPlayerFile.VideoFile, targetResolution: String?) {
+        if (targetResolution == null) {
+            _uiState.setError("Invalid resolution passed")
+            return
+        }
+
+        val cmd = FFMpegCommandWrapper.rescaleVideo(videoFile, targetResolution)
+        val notificationContent = getApplication<SharkPlayer>()
+            .getString(
+                R.string.rescale_notification_content,
+                videoFile.fileName,
+                videoFile.videoHeight,
+                targetResolution
+            )
+        val notificationTitle = getApplication<SharkPlayer>()
+            .getString(R.string.rescale_notification_title)
+
+        val inputData = FFMpegWorker.getWorkData(
+            cmd,
+            notificationTitle = notificationTitle,
+            notificationContent = notificationContent
+        )
+        val rescaleWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<FFMpegWorker>()
+            .setInputData(inputData)
+            .addTag(notificationContent)
+            .build()
+        WorkManager.getInstance(getApplication<SharkPlayer>().applicationContext)
+            .enqueue(rescaleWorkRequest)
+    }
+
+    fun refresh() {
+        loadDirectory()
+    }
+
+    fun deleteVideo(videoFile: SharkPlayerFile.VideoFile) {
+        _uiState.setLoading()
+        viewModelScope.launch {
+            when (val result = directoryRepository.deleteVideo(videoFile)) {
+                is TaskState.Failure -> _uiState.setError(result.error)
+                is TaskState.Success -> {
+                    refresh()
+                    _uiState.setIdle()
+                }
             }
         }
     }

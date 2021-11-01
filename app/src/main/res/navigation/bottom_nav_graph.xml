@@ -14,10 +14,10 @@
         android:name="com.sharkaboi.sharkplayer.modules.settings.ui.SettingsFragment"
         android:label="SettingsFragment" />
     <fragment
-        android:id="@+id/nav_utilities"
-        android:name="com.sharkaboi.sharkplayer.modules.utilities.ui.UtilitiesFragment"
-        android:label="fragment_utilities"
-        tools:layout="@layout/fragment_utilities" />
+        android:id="@+id/nav_workers"
+        android:name="com.sharkaboi.sharkplayer.modules.workers.ui.WorkersFragment"
+        android:label="fragment_workers"
+        tools:layout="@layout/fragment_workers" />
 
     <fragment
         android:id="@+id/directoryFragment"

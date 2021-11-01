@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,9 +15,13 @@ import com.sharkaboi.sharkplayer.common.extensions.getTimeString
 import com.sharkaboi.sharkplayer.common.extensions.setThumbnailOf
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.ItemDirectoryFileBinding
+import me.saket.cascade.CascadePopupMenu
 
-class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
-    ListAdapter<SharkPlayerFile, DirectoryAdapter.DirectoryViewHolder>(diffUtilItemCallback) {
+class DirectoryAdapter(
+    private val onClick: (SharkPlayerFile) -> Unit,
+    private val onVideoRescale: (SharkPlayerFile.VideoFile) -> Unit,
+    private val onDeleteVideo: (SharkPlayerFile.VideoFile) -> Unit
+) : ListAdapter<SharkPlayerFile, DirectoryAdapter.DirectoryViewHolder>(diffUtilItemCallback) {
 
     private lateinit var binding: ItemDirectoryFileBinding
 
@@ -26,7 +31,7 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
             parent,
             false
         )
-        return DirectoryViewHolder(binding, onClick)
+        return DirectoryViewHolder(binding, onClick, onVideoRescale, onDeleteVideo)
     }
 
     override fun onBindViewHolder(holder: DirectoryViewHolder, position: Int) {
@@ -35,7 +40,9 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
 
     class DirectoryViewHolder(
         private val binding: ItemDirectoryFileBinding,
-        private val onClick: (SharkPlayerFile) -> Unit
+        private val onClick: (SharkPlayerFile) -> Unit,
+        private val onVideoRescale: (SharkPlayerFile.VideoFile) -> Unit,
+        private val onDeleteVideo: (SharkPlayerFile.VideoFile) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.ibMore.isGone = true
@@ -83,6 +90,19 @@ class DirectoryAdapter(private val onClick: (SharkPlayerFile) -> Unit) :
                         append(item.length.getTimeString())
                         append(" - ")
                         append(item.size.getSizeString())
+                    }
+                    binding.ibMore.isVisible = true
+                    binding.ibMore.setOnClickListener {
+                        val menu = CascadePopupMenu(it.context, it)
+                        menu.inflate(R.menu.video_options_menu)
+                        menu.setOnMenuItemClickListener { menuItem ->
+                            when (menuItem.itemId) {
+                                R.id.rescale_video_item -> onVideoRescale(item)
+                                R.id.delete_video_item -> onDeleteVideo(item)
+                            }
+                            true
+                        }
+                        menu.show()
                     }
                 }
             }

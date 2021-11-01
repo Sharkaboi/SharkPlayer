@@ -8,12 +8,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sharkaboi.sharkplayer.BottomNavGraphDirections
 import com.sharkaboi.sharkplayer.R
-import com.sharkaboi.sharkplayer.common.extensions.initLinearDefaults
-import com.sharkaboi.sharkplayer.common.extensions.observe
-import com.sharkaboi.sharkplayer.common.extensions.showIntegerValuePromptDialog
-import com.sharkaboi.sharkplayer.common.extensions.showToast
+import com.sharkaboi.sharkplayer.common.extensions.*
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.FragmentDirectoryBinding
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs
@@ -79,10 +77,18 @@ class DirectoryFragment : Fragment() {
     }
 
     private fun initViews() {
+        setupSwipeRefresh()
         setupTitle()
         setupBackButton()
         setupPathTextView()
         setupRecyclerView()
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefreshDirectory.setOnRefreshListener {
+            directoryViewModel.refresh()
+            binding.swipeRefreshDirectory.isRefreshing = false
+        }
     }
 
     private fun setupTitle() {
@@ -102,11 +108,35 @@ class DirectoryFragment : Fragment() {
 
     private fun setupRecyclerView() {
         val rvDirectories = binding.rvDirectories
-        directoryAdapter = DirectoryAdapter { file ->
-            navigateToFile(file)
-        }
+        directoryAdapter = DirectoryAdapter(
+            onClick = { file ->
+                navigateToFile(file)
+            },
+            onVideoRescale = { videoFile ->
+                showRescaleOptions(videoFile)
+            },
+            onDeleteVideo = { videoFile ->
+                context?.showOneOpDialog(R.string.delete_video) {
+                    directoryViewModel.deleteVideo(videoFile)
+                }
+            }
+        )
         rvDirectories.adapter = directoryAdapter
         rvDirectories.initLinearDefaults(context, hasFixedSize = true)
+    }
+
+    private fun showRescaleOptions(videoFile: SharkPlayerFile.VideoFile) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.rescale_options_title)
+            .setItems(R.array.rescale_supported_resolutions) { dialog, which ->
+                directoryViewModel.runRescaleWork(
+                    videoFile,
+                    resources.getStringArray(R.array.rescale_supported_resolutions).getOrNull(which)
+                )
+                dialog.dismiss()
+            }.setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 
     private fun setObservers() {
@@ -195,6 +225,11 @@ class DirectoryFragment : Fragment() {
     }
 
     private fun openVideo(file: SharkPlayerFile.VideoFile) {
+        if (file.isDirty) {
+            showToast(R.string.video_corrupted)
+            return
+        }
+
         val action = BottomNavGraphDirections.openVideos(
             videoNavArgs = VideoNavArgs(
                 dirPath = directoryViewModel.selectedDir.path,
@@ -205,6 +240,11 @@ class DirectoryFragment : Fragment() {
     }
 
     private fun openAudio(file: SharkPlayerFile.AudioFile) {
+        if (file.isDirty) {
+            showToast(R.string.audio_corrupted)
+            return
+        }
+
         val action = BottomNavGraphDirections.openAudio(file.path)
         navController.navigate(action)
     }

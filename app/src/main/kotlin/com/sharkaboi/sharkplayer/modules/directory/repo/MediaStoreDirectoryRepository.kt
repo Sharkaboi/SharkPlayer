@@ -47,14 +47,16 @@ class MediaStoreDirectoryRepository(
             while (cursor != null && cursor.moveToNext()) {
                 val path = cursor.getStringOfColumnName(MediaStore.Video.Media.DATA)
                 val name = cursor.getStringOfColumnName(MediaStore.Video.Media.DISPLAY_NAME)
-                val resolution = cursor.getStringOfColumnName(MediaStore.Video.Media.RESOLUTION)
+                val height = cursor.getLongOfColumnName(MediaStore.Video.Media.HEIGHT)
+                val width = cursor.getLongOfColumnName(MediaStore.Video.Media.WIDTH)
                 val length = cursor.getLongOfColumnName(MediaStore.Video.Media.DURATION)
                 val size = cursor.getLongOfColumnName(MediaStore.Video.Media.SIZE)
                 sharkFiles.add(
                     SharkPlayerFile.VideoFile(
                         fileName = name,
                         path = path,
-                        resolution = resolution,
+                        videoHeight = height.toInt(),
+                        videoWidth = width.toInt(),
                         length = Duration.milliseconds(length),
                         size = size
                     )
@@ -99,5 +101,20 @@ class MediaStoreDirectoryRepository(
             } else {
                 TaskState.failureWithMessage("Directory does not exist.")
             }
+        }
+
+    override suspend fun deleteVideo(videoFile: SharkPlayerFile.VideoFile): TaskState<Unit> =
+        tryCatching {
+            val file = videoFile.getFile()
+            if (!file.exists()) {
+                return@tryCatching TaskState.failureWithMessage("Video file does not exist.")
+            }
+
+            val isSuccess = file.delete()
+            if (!isSuccess) {
+                return@tryCatching TaskState.failureWithMessage("Couldn't delete video file.")
+            }
+
+            TaskState.Success(Unit)
         }
 }

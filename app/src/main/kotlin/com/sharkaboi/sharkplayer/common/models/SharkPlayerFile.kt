@@ -17,16 +17,38 @@ sealed class SharkPlayerFile {
         val path: String,
         val length: Duration,
         val size: Long,
+        val videoWidth: Int,
+        val videoHeight: Int,
+    ) : SharkPlayerFile() {
         val resolution: String
-    ) : SharkPlayerFile()
+            get() = "$videoWidth x $videoHeight"
+
+        val isDirty: Boolean
+            get() = path.isBlank()
+                    || size <= 0L
+                    || !length.isPositive()
+                    || size <= 0L
+                    || videoWidth <= 0L
+                    || videoHeight <= 0L
+    }
 
     data class AudioFile(
         val fileName: String,
         val path: String,
         val size: Long,
         val length: Duration,
+        val bitRate: Long
+    ) : SharkPlayerFile() {
+
         val quality: String
-    ) : SharkPlayerFile()
+            get() = "$bitRate kbps"
+
+        val isDirty: Boolean
+            get() = path.isBlank()
+                    || size <= 0L
+                    || !length.isPositive()
+                    || bitRate <= 0L
+    }
 
     data class OtherFile(
         val fileName: String,
@@ -63,6 +85,9 @@ sealed class SharkPlayerFile {
         }
     }
 
+    val parentPath
+        get() = this.absolutePath.substringBeforeLast(File.separator)
+
     companion object {
         fun directoryFromPath(path: String?): Directory {
             val requiredPath = path ?: Environment.getRootDirectory().absolutePath
@@ -89,10 +114,12 @@ private fun File.toSharkPlayerDirectory(): SharkPlayerFile.Directory {
 }
 
 private fun File.toSharkPlayerVideoFile(): SharkPlayerFile.VideoFile {
+    val (height, width) = this.videoResolution
     return SharkPlayerFile.VideoFile(
         fileName = this.nameWithoutExtension,
         path = this.absolutePath,
-        resolution = this.videoResolution,
+        videoHeight = height,
+        videoWidth = width,
         length = this.videoOrAudioLength,
         size = this.fileSize
     )
@@ -102,7 +129,7 @@ private fun File.toSharkPlayerAudioFile(): SharkPlayerFile.AudioFile {
     return SharkPlayerFile.AudioFile(
         fileName = this.nameWithoutExtension,
         path = this.absolutePath,
-        quality = this.audioBitrate,
+        bitRate = this.audioBitrate,
         length = this.videoOrAudioLength,
         size = this.fileSize
     )

@@ -28,7 +28,7 @@ internal val File.fileSize: Long
     }
 
 internal val File.videoOrAudioLength: Duration
-    get() {
+    get() = runCatching {
         val metadataRetriever = MediaMetadataRetriever()
         metadataRetriever.setDataSource(absolutePath)
         val lengthInMilliSeconds =
@@ -36,10 +36,10 @@ internal val File.videoOrAudioLength: Duration
                 ?.toLong() ?: 0L
         metadataRetriever.release()
         return Duration.milliseconds(lengthInMilliSeconds)
-    }
+    }.getOrElse { Duration.ZERO }
 
-internal val File.videoResolution: String
-    get() {
+internal val File.videoResolution: Pair<Int, Int>
+    get() = runCatching {
         val metadataRetriever = MediaMetadataRetriever()
         metadataRetriever.setDataSource(absolutePath)
         val videoHeight =
@@ -49,18 +49,17 @@ internal val File.videoResolution: String
             metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
                 ?.toInt() ?: 0
         metadataRetriever.release()
-        return "$videoWidth x $videoHeight"
-    }
+        return Pair(videoHeight, videoWidth)
+    }.getOrElse { Pair(0, 0) }
 
-internal val File.audioBitrate: String
-    get() {
+internal val File.audioBitrate: Long
+    get() = runCatching {
         val metadataRetriever = MediaMetadataRetriever()
         metadataRetriever.setDataSource(absolutePath)
         val bitsPerSecond =
             metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
                 ?.toLong() ?: 0L
         metadataRetriever.release()
-        val kiloBitsPerSecond = bitsPerSecond / 1024
-        return "$kiloBitsPerSecond kbps"
-    }
+        return bitsPerSecond / 1024
+    }.getOrElse { 0L }
 

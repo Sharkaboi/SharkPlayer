@@ -92,6 +92,7 @@ class VideoPlayerActivity : AppCompatActivity() {
     }
 
     private fun updateFileNameOf(mediaItem: MediaItem?) {
+        binding.tvFileName.isSelected = true
         binding.tvFileName.text =
             mediaItem?.playbackProperties?.uri?.path?.let { File(it).nameWithoutExtension }
     }

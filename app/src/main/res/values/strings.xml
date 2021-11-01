@@ -26,4 +26,23 @@
     <string name="enter_track_index">Enter Track Index</string>
     <string name="audio">Audio</string>
     <string name="no_videos_in_folder">No videos found in the folder</string>
+    <string name="rescale">Rescale</string>
+    <string name="ffmpeg_notif_description">This is the channel used for showing notifications when doing ffmpeg operations</string>
+    <string name="ffmpeg_channel_name">FFMPEG Operations</string>
+    <string name="ffmpeg_notification_channel_id">ffmpeg_service_channel_id</string>
+    <string name="rescale_cancel_notification">Cancel</string>
+    <string name="rescale_options_title">Choose resolution</string>
+    <string name="cancel">Cancel</string>
+    <string name="video_corrupted">Video is corrupted</string>
+    <string name="audio_corrupted">Audio is corrupted</string>
+    <string name="delete">Delete</string>
+    <string name="delete_video">Delete this video?</string>
+    <string name="rescale_notification_title">Rescaling Video</string>
+    <string name="rescale_notification_content">%s Rescaling from %dp to %s</string>
+    <string name="no_workers_running">No workers running</string>
+    <string-array name="rescale_supported_resolutions">
+        <item>480p</item>
+        <item>720p</item>
+        <item>1080p</item>
+    </string-array>
 </resources>
