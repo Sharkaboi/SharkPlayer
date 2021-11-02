@@ -9,3 +9,7 @@ internal fun ExoPlayer.setVideosAsPlayList(videoFiles: List<Uri>) {
     clearMediaItems()
     setMediaItems(mediaItems, true)
 }
+
+internal fun ExoPlayer.setAudio(audioUri: Uri) {
+    setMediaItem(MediaItem.fromUri(audioUri))
+}

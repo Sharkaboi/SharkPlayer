@@ -44,11 +44,13 @@ class VideoPlayerRepository(
                 }
                 else -> AudioOptions.WithTrackId()
             }
+            val playWhenReady = sharedPrefRepository.shouldStartVideoPaused().not()
             TaskState.Success(
                 VideoInfo(
                     videoUris = videoNavArgs.videoPaths.map(String::toUri),
                     subtitleOptions = subtitleOptions,
-                    audioOptions = audioOptions
+                    audioOptions = audioOptions,
+                    playWhenReady = playWhenReady
                 )
             )
         }

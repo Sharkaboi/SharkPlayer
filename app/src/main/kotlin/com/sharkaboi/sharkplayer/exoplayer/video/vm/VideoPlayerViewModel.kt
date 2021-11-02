@@ -19,8 +19,6 @@ constructor(
     private val videoNavArgs = savedStateHandle.get<VideoNavArgs>(VIDEO_NAV_ARGS_KEY)
     private val _uiState = MutableLiveData<VideoPlayerState>().getDefault()
     val uiState: LiveData<VideoPlayerState> = _uiState
-    private val _playbackState = MutableLiveData<VideoPlayBackState>()
-    val playbackState: LiveData<VideoPlayBackState> = _playbackState
 
     init {
         if (videoNavArgs == null || videoNavArgs.videoPaths.isEmpty()) {
@@ -43,11 +41,6 @@ constructor(
     private fun updateMetadata(videoInfo: VideoInfo) {
         _uiState.setLoading()
         _uiState.setSuccess(videoInfo)
-    }
-
-    private fun updatePlaybackState(videoPlayBackState: VideoPlayBackState) {
-        _uiState.setLoading()
-        _playbackState.value = videoPlayBackState
     }
 
     companion object {

@@ -5,7 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-suspend fun <T : Any> tryCatching(block: suspend () -> TaskState<T>): TaskState<T> {
+suspend fun <T : Any> tryCatching(
+    block: suspend () -> TaskState<T>
+): TaskState<T> {
     return withContext(Dispatchers.IO) {
         try {
             block()

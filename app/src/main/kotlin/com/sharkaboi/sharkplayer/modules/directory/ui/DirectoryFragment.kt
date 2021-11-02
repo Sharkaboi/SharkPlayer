@@ -19,6 +19,7 @@ import com.sharkaboi.sharkplayer.modules.directory.adapters.DirectoryAdapter
 import com.sharkaboi.sharkplayer.modules.directory.vm.DirectoryState
 import com.sharkaboi.sharkplayer.modules.directory.vm.DirectoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class DirectoryFragment : Fragment() {
@@ -201,6 +202,7 @@ class DirectoryFragment : Fragment() {
 
     private fun setPlayListListener(files: List<SharkPlayerFile>) {
         val videoPaths = files.filterIsInstance<SharkPlayerFile.VideoFile>().map { it.path }
+        Timber.d(videoPaths.toString())
         binding.fabPlay.setOnClickListener { openAsPlaylist(videoPaths) }
     }
 

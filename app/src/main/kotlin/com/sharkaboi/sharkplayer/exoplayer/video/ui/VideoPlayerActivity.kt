@@ -16,7 +16,6 @@ import com.sharkaboi.sharkplayer.databinding.ActivityVideoPlayerBinding
 import com.sharkaboi.sharkplayer.exoplayer.util.AudioOptions
 import com.sharkaboi.sharkplayer.exoplayer.util.SubtitleOptions
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
-import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayBackState
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerState
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,8 +48,6 @@ class VideoPlayerActivity : AppCompatActivity() {
                 else -> Unit
             }
         }
-        observe(videoPlayerViewModel.playbackState, ::handlePlaybackUpdate)
-
     }
 
     private fun handleMetaDataUpdate(videoInfo: VideoInfo) {
@@ -79,7 +76,7 @@ class VideoPlayerActivity : AppCompatActivity() {
         binding.playerView.player = player
         player?.setVideosAsPlayList(videoInfo.videoUris)
         player?.prepare()
-        player?.play()
+        player?.playWhenReady = videoInfo.playWhenReady
         player?.addListener(playListListener)
         updateFileNameOf(player?.currentMediaItem)
     }
@@ -95,10 +92,6 @@ class VideoPlayerActivity : AppCompatActivity() {
         binding.tvFileName.isSelected = true
         binding.tvFileName.text =
             mediaItem?.playbackProperties?.uri?.path?.let { File(it).nameWithoutExtension }
-    }
-
-    private fun handlePlaybackUpdate(videoPlayBackState: VideoPlayBackState) {
-        // TODO: 25-09-2021
     }
 
     override fun onDestroy() {

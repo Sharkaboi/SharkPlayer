@@ -14,4 +14,10 @@ class SharedPrefRepository(
 
     fun getAudioLanguages() =
         sharedPreferences.getString(SharedPrefKeys.AUDIO_LANGUAGE, String.emptyString)
+
+    fun shouldStartVideoPaused() =
+        sharedPreferences.getBoolean(SharedPrefKeys.START_PAUSED_VIDEO, false)
+
+    fun shouldStartAudioPaused() =
+        sharedPreferences.getBoolean(SharedPrefKeys.START_PAUSED_AUDIO, false)
 }
