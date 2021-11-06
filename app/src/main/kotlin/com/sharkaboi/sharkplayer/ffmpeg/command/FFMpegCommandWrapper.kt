@@ -27,15 +27,20 @@ object FFMpegCommandWrapper {
         val inputHeight = videoFile.videoHeight.toFloat()
         val outputWidth = (inputWidth / (inputHeight / outputHeight)).nextEvenInt()
 
+        // ffmpeg -i input.mp4 -vcodec libx264 -crf 27 -preset veryfast -c:a copy -s 960x540 output.mp4
         return arrayOf(
             "-i",
             videoFile.path,
-            "-vf",
-            "scale=$outputWidth:$outputHeight",
-//            "-preset",
-//            "slow",
-//            "-crf",
-//            "18",
+            "-vcodec",
+            "libx264",
+            "-crf",
+            "27",
+            "-preset",
+            "veryfast",
+            "-c:a",
+            "copy",
+            "-s",
+            "${outputWidth}x$outputHeight",
             outputPath
         )
     }
