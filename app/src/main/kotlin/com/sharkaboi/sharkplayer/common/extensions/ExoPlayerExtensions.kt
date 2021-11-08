@@ -4,8 +4,7 @@ import android.net.Uri
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 
-internal fun ExoPlayer.setVideosAsPlayList(videoFiles: List<Uri>) {
-    val mediaItems = videoFiles.map { MediaItem.fromUri(it) }
+internal fun ExoPlayer.setVideosAsPlayList(mediaItems: List<MediaItem>) {
     clearMediaItems()
     setMediaItems(mediaItems, true)
 }

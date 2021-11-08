@@ -74,7 +74,7 @@ class VideoPlayerActivity : AppCompatActivity() {
         trackSelector.setParameters(builder)
         player = SimpleExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
         binding.playerView.player = player
-        player?.setVideosAsPlayList(videoInfo.videoUris)
+        player?.setVideosAsPlayList(videoInfo.videoMediaItems)
         player?.prepare()
         player?.playWhenReady = videoInfo.playWhenReady
         player?.addListener(playListListener)
