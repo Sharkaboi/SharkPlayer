@@ -11,6 +11,7 @@
         android:id="@+id/playerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:controller_layout_id="@layout/exo_player_control_view"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,24 +31,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvFileName"
-        style="@style/marqueeTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:gravity="center"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="32dp"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        tools:text="Attack on Titan" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

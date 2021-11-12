@@ -63,9 +63,14 @@ dependencies {
 
     //exoplayer
     implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
 
     //ffmpeg
     implementation "com.writingminds:FFmpegAndroid:$ffmpeg_version"
+
+    // Open subs
+    implementation "com.github.masterwok:open-subtitles-android:$opensubs_version"
+
     //coil
     implementation "io.coil-kt:coil:$coil_version"
     implementation "io.coil-kt:coil-video:$coil_version"
