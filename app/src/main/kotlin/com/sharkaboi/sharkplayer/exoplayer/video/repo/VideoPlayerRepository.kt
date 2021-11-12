@@ -4,6 +4,9 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.util.MimeTypes
+import com.masterwok.opensubtitlesandroid.OpenSubtitlesUrlBuilder
+import com.masterwok.opensubtitlesandroid.models.OpenSubtitleItem
+import com.masterwok.opensubtitlesandroid.services.OpenSubtitlesService
 import com.sharkaboi.sharkplayer.common.extensions.tryCatching
 import com.sharkaboi.sharkplayer.common.util.TaskState
 import com.sharkaboi.sharkplayer.data.datastore.DataStoreRepository
@@ -14,7 +17,10 @@ import com.sharkaboi.sharkplayer.exoplayer.util.SUBTITLE_LANGUAGE_SEPARATOR
 import com.sharkaboi.sharkplayer.exoplayer.util.SubtitleOptions
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 
 class VideoPlayerRepository(
@@ -29,37 +35,49 @@ class VideoPlayerRepository(
             val playWhenReady = sharedPrefRepository.shouldStartVideoPaused().not()
             val mediaItems = videoNavArgs.videoPaths.map {
                 val mediaItemBuilder = MediaItem.Builder().setUri(it)
-                val subsList = mutableListOf<MediaItem.Subtitle>()
+                val subsList = mutableListOf<MediaItem.SubtitleConfiguration>()
 
                 val sameNameSubUri = subOfVideoName(it, dirPath)
                 if (sameNameSubUri != null) {
                     val mediaItemSubtitle =
-                        MediaItem.Subtitle(
-                            sameNameSubUri,
-                            MimeTypes.APPLICATION_SUBRIP,
-                            null,
-                            0,
-                            0,
-                            "Local - ${File(sameNameSubUri.toString()).name}"
-                        )
+                        MediaItem.SubtitleConfiguration.Builder(sameNameSubUri)
+                            .setMimeType(MimeTypes.APPLICATION_SUBRIP)
+                            .setLanguage(null)
+                            .setSelectionFlags(0)
+                            .setRoleFlags(0)
+                            .setLabel("Local - ${File(sameNameSubUri.toString()).name}")
+                            .build()
                     subsList.add(mediaItemSubtitle)
                 }
 
                 val subsFolderSubUri = subOfVideoNameInSubsFolder(it, dirPath)
                 if (subsFolderSubUri != null) {
                     val mediaItemSubtitle =
-                        MediaItem.Subtitle(
-                            subsFolderSubUri,
-                            MimeTypes.APPLICATION_SUBRIP,
-                            null,
-                            0,
-                            0,
-                            "Subs Folder - ${File(subsFolderSubUri.toString()).name}"
-                        )
+                        MediaItem.SubtitleConfiguration.Builder(subsFolderSubUri)
+                            .setMimeType(MimeTypes.APPLICATION_SUBRIP)
+                            .setLanguage(null)
+                            .setSelectionFlags(0)
+                            .setRoleFlags(0)
+                            .setLabel("Subs Folder - ${File(subsFolderSubUri.toString()).name}")
+                            .build()
                     subsList.add(mediaItemSubtitle)
                 }
 
-                mediaItemBuilder.setSubtitles(subsList)
+                val openSubsUris = getOpenSubsUris(it, dirPath)
+                Timber.d(openSubsUris.toString())
+                openSubsUris.forEach { openSubsUri ->
+                    val mediaItemSubtitle =
+                        MediaItem.SubtitleConfiguration.Builder(openSubsUri)
+                            .setMimeType(MimeTypes.APPLICATION_SUBRIP)
+                            .setLanguage(null)
+                            .setSelectionFlags(0)
+                            .setRoleFlags(0)
+                            .setLabel("Open Subs - ${File(subsFolderSubUri.toString()).name}")
+                            .build()
+                    subsList.add(mediaItemSubtitle)
+                }
+
+                mediaItemBuilder.setSubtitleConfigurations(subsList)
                 mediaItemBuilder.build()
             }
 
@@ -71,6 +89,20 @@ class VideoPlayerRepository(
                     playWhenReady = playWhenReady
                 )
             )
+        }
+
+    private suspend fun getOpenSubsUris(videoUri: String, dirPath: String): List<Uri> =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val videoFile = File(videoUri)
+                val url = OpenSubtitlesUrlBuilder()
+                    .query(videoFile.name)
+                    .build()
+                val service = OpenSubtitlesService()
+                val searchResult: Array<OpenSubtitleItem> =
+                    service.search(OpenSubtitlesService.TemporaryUserAgent, url)
+                searchResult.map { it.SubDownloadLink.toUri() }.take(3)
+            }.getOrDefault(emptyList())
         }
 
     private fun subOfVideoNameInSubsFolder(videoUri: String, dirPath: String): Uri? {

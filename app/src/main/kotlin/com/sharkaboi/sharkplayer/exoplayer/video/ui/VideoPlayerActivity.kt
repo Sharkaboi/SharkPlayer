@@ -1,18 +1,22 @@
 package com.sharkaboi.sharkplayer.exoplayer.video.ui
 
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.sharkaboi.sharkplayer.R
 import com.sharkaboi.sharkplayer.common.extensions.observe
 import com.sharkaboi.sharkplayer.common.extensions.setVideosAsPlayList
 import com.sharkaboi.sharkplayer.common.extensions.showToast
 import com.sharkaboi.sharkplayer.databinding.ActivityVideoPlayerBinding
+import com.sharkaboi.sharkplayer.exoplayer.download_sub.DownloadSubDialog
 import com.sharkaboi.sharkplayer.exoplayer.util.AudioOptions
 import com.sharkaboi.sharkplayer.exoplayer.util.SubtitleOptions
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
@@ -24,7 +28,7 @@ import java.io.File
 @AndroidEntryPoint
 class VideoPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVideoPlayerBinding
-    private var player: SimpleExoPlayer? = null
+    private var player: ExoPlayer? = null
     private val videoPlayerViewModel by viewModels<VideoPlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,13 +76,27 @@ class VideoPlayerActivity : AppCompatActivity() {
             }
         }
         trackSelector.setParameters(builder)
-        player = SimpleExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
+        player = ExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
         binding.playerView.player = player
         player?.setVideosAsPlayList(videoInfo.videoMediaItems)
         player?.prepare()
         player?.playWhenReady = videoInfo.playWhenReady
         player?.addListener(playListListener)
         updateFileNameOf(player?.currentMediaItem)
+        setDownloadListener()
+    }
+
+    private fun setDownloadListener() {
+        val btnDownloadSub = binding.playerView.findViewById<View>(R.id.exo_download_sub)
+        btnDownloadSub?.let {
+            it.setOnClickListener {
+                openDownloadSubDialog()
+            }
+        }
+    }
+
+    private fun openDownloadSubDialog() {
+        DownloadSubDialog().show(supportFragmentManager, DownloadSubDialog::class.simpleName)
     }
 
     private val playListListener = object : Player.Listener {
@@ -89,9 +107,10 @@ class VideoPlayerActivity : AppCompatActivity() {
     }
 
     private fun updateFileNameOf(mediaItem: MediaItem?) {
-        binding.tvFileName.isSelected = true
-        binding.tvFileName.text =
-            mediaItem?.playbackProperties?.uri?.path?.let { File(it).nameWithoutExtension }
+        val tvFileName = binding.playerView.findViewById<TextView>(R.id.exo_video_file_name)
+        tvFileName?.isSelected = true
+        tvFileName?.text =
+            mediaItem?.localConfiguration?.uri?.path?.let { File(it).nameWithoutExtension }
     }
 
     override fun onDestroy() {

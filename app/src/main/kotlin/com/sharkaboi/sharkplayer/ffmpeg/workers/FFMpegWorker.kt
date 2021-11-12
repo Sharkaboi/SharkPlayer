@@ -30,36 +30,41 @@ class FFMpegWorker @AssistedInject constructor(
                 NotificationManager
 
     override suspend fun doWork(): Result {
-        val cmd = inputData.getStringArray(FFMPEG_CMD_KEY)
-            ?: return Result.failure()
+        try {
+            val cmd = inputData.getStringArray(FFMPEG_CMD_KEY)
+                ?: return Result.failure()
 
-        val notificationTitle = inputData.getString(NOTIFICATION_TITLE_KEY)
-            ?: return Result.failure()
+            val notificationTitle = inputData.getString(NOTIFICATION_TITLE_KEY)
+                ?: return Result.failure()
 
-        val content = inputData.getString(NOTIFICATION_CONTENT_KEY)
-            ?: String.emptyString
+            val content = inputData.getString(NOTIFICATION_CONTENT_KEY)
+                ?: String.emptyString
 
-        val foregroundInfo = createForegroundInfo(notificationTitle, content)
-        setForeground(foregroundInfo)
+            val foregroundInfo = createForegroundInfo(notificationTitle, content)
+            setForeground(foregroundInfo)
 
-        Timber.d("cmd : ${cmd.joinToString()}")
-        Timber.d("content : $content")
+            Timber.d("cmd : ${cmd.joinToString()}")
+            Timber.d("content : $content")
 
-        val result = ffMpegDataSource.loadBinary()
-        if (result.isFailure) {
-            Timber.d("Couldn't load ffmpeg lib due to ${(result as TaskState.Failure).error.message}")
-            return Result.failure()
-        }
-
-        return when (val operationResult = ffMpegDataSource.execute(cmd)) {
-            is TaskState.Failure -> {
-                Timber.d("ffmpeg failure : ${operationResult.error.message}")
-                Result.failure()
+            val result = ffMpegDataSource.loadBinary()
+            if (result.isFailure) {
+                Timber.d("Couldn't load ffmpeg lib due to ${(result as TaskState.Failure).error.message}")
+                return Result.failure()
             }
-            is TaskState.Success -> {
-                Timber.d("ffmpeg success : ${operationResult.data}")
-                Result.success()
+
+            return when (val operationResult = ffMpegDataSource.execute(cmd)) {
+                is TaskState.Failure -> {
+                    Timber.d("ffmpeg failure : ${operationResult.error.message}")
+                    Result.failure()
+                }
+                is TaskState.Success -> {
+                    Timber.d("ffmpeg success : ${operationResult.data}")
+                    Result.success()
+                }
             }
+        } finally {
+            Timber.d("Ffmpeg cleaned")
+            ffMpegDataSource.killProcess()
         }
     }
 

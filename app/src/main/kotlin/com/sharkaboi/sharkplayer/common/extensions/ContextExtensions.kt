@@ -7,6 +7,7 @@ import android.os.Environment
 import android.os.storage.StorageManager
 import android.os.storage.StorageVolume
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.annotation.StringRes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sharkaboi.sharkplayer.R
@@ -123,3 +124,9 @@ internal fun Context.showIntegerValuePromptDialog(
     defaultValue: Int? = null,
     onEnter: (Int) -> Unit = {}
 ) = showIntegerValuePromptDialog(getString(titleId), buttonHintId, defaultValue, onEnter)
+
+internal fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) =
+    Toast.makeText(this, message, length).show()
+
+internal fun Context.showToast(@StringRes id: Int, length: Int = Toast.LENGTH_SHORT) =
+    Toast.makeText(this, id, length).show()
