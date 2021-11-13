@@ -17,7 +17,7 @@ internal val File.isVideoFile: Boolean
 
 internal val File.isAudioFile: Boolean
     get() {
-        val supportedFileRegex = "m4a|mp3|ogg|wav|flac".toRegex(RegexOption.IGNORE_CASE)
+        val supportedFileRegex = "m4a|mp3|ogg|wav|flac|opus".toRegex(RegexOption.IGNORE_CASE)
         return this.isFile && this.extension.matches(supportedFileRegex)
     }
 
