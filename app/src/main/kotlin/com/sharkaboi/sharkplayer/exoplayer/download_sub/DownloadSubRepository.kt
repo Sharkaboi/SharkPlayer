@@ -9,7 +9,6 @@ import com.masterwok.opensubtitlesandroid.services.OpenSubtitlesService
 import com.sharkaboi.sharkplayer.common.extensions.tryCatching
 import com.sharkaboi.sharkplayer.common.util.TaskState
 import dagger.hilt.android.qualifiers.ApplicationContext
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -24,18 +23,18 @@ class DownloadSubRepository
             .build()
         val subs =
             openSubtitlesService.search(OpenSubtitlesService.TemporaryUserAgent, url).toList()
-        Timber.d(subs.toString())
         TaskState.Success(subs)
     }
 
     suspend fun downloadSub(openSubtitleItem: OpenSubtitleItem) = tryCatching {
         val context = context.applicationContext
+        val targetUri = getSubtitleSaveUri(context, openSubtitleItem)
         openSubtitlesService.downloadSubtitle(
             context,
             openSubtitleItem,
-            getSubtitleSaveUri(context, openSubtitleItem)
+            targetUri
         )
-        TaskState.Success(Unit)
+        TaskState.Success(targetUri)
     }
 
     private fun getSubtitleSaveUri(context: Context?, openSubtitleItem: OpenSubtitleItem): Uri {

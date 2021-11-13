@@ -7,10 +7,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.util.MimeTypes
 import com.sharkaboi.sharkplayer.R
 import com.sharkaboi.sharkplayer.common.extensions.observe
 import com.sharkaboi.sharkplayer.common.extensions.setVideosAsPlayList
@@ -23,7 +25,9 @@ import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerState
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.io.File
+
 
 @AndroidEntryPoint
 class VideoPlayerActivity : AppCompatActivity() {
@@ -50,6 +54,33 @@ class VideoPlayerActivity : AppCompatActivity() {
                 is VideoPlayerState.InvalidData -> showToast(state.message)
                 is VideoPlayerState.Success -> handleMetaDataUpdate(state.videoInfo)
                 else -> Unit
+            }
+        }
+        observe(videoPlayerViewModel.downloadedSubUri) { uri ->
+            if (uri == null) {
+                return@observe
+            }
+
+            val currentMediaItem = player?.currentMediaItem ?: return@observe
+
+            player?.let {
+                val currentIndex = it.currentMediaItemIndex
+                it.removeMediaItem(currentIndex)
+                val subConfiguration =
+                    MediaItem.SubtitleConfiguration.Builder(uri)
+                        .setMimeType(MimeTypes.APPLICATION_SUBRIP)
+                        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                        .setRoleFlags(C.ROLE_FLAG_SUBTITLE)
+                        .setLabel("Downloads - ${File(uri.toString()).name}")
+                        .build()
+                val mergedMediaItem = currentMediaItem.buildUpon()
+                    .setSubtitleConfigurations(
+                        currentMediaItem.localConfiguration?.subtitleConfigurations.orEmpty()
+                            .plus(subConfiguration)
+                    )
+                    .build()
+                Timber.d(mergedMediaItem.toString())
+                it.addMediaItem(mergedMediaItem)
             }
         }
     }

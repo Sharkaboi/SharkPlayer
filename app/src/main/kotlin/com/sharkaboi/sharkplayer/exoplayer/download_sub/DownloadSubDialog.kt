@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -12,7 +13,9 @@ import com.sharkaboi.sharkplayer.common.extensions.debounce
 import com.sharkaboi.sharkplayer.common.extensions.initLinearDefaults
 import com.sharkaboi.sharkplayer.common.extensions.observe
 import com.sharkaboi.sharkplayer.databinding.DialogDownloadSubBinding
+import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class DownloadSubDialog : BottomSheetDialogFragment() {
@@ -20,6 +23,7 @@ class DownloadSubDialog : BottomSheetDialogFragment() {
     private var _binding: DialogDownloadSubBinding? = null
     private val binding get() = _binding!!
     private val downloadSubViewModel by viewModels<DownloadSubViewModel>()
+    private val videoPlayerViewModel by activityViewModels<VideoPlayerViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +65,15 @@ class DownloadSubDialog : BottomSheetDialogFragment() {
             rvSubs.adapter = adapter
             rvSubs.initLinearDefaults(context)
             adapter.submitList(list)
+        }
+        observe(downloadSubViewModel.downloadedSubUri) { uri ->
+            if (uri == null) {
+                return@observe
+            }
+
+            Timber.d(videoPlayerViewModel.toString())
+            videoPlayerViewModel.setDownloadedSubUri(uri)
+            dismiss()
         }
     }
 }

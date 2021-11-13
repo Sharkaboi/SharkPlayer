@@ -1,6 +1,7 @@
 package com.sharkaboi.sharkplayer.exoplayer.download_sub
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,6 +24,9 @@ class DownloadSubViewModel
     private val _subs = MutableLiveData<List<OpenSubtitleItem>>(emptyList())
     val subs: LiveData<List<OpenSubtitleItem>> = _subs
 
+    private val _downloadedSubUri = MutableLiveData<Uri?>(null)
+    val downloadedSubUri: LiveData<Uri?> = _downloadedSubUri
+
     fun searchSubs(text: CharSequence?) {
         if (text.isNullOrBlank()) {
             return
@@ -44,7 +48,7 @@ class DownloadSubViewModel
         viewModelScope.launch {
             when (val result = downloadSubRepository.downloadSub(openSubtitleItem)) {
                 is TaskState.Failure -> showToast(result.error.message)
-                else -> Unit
+                is TaskState.Success -> _downloadedSubUri.value = result.data
             }
         }
     }
