@@ -311,7 +311,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableType;
           hasEnabledTracks = true;
         }
       } else {
-        Assertions.checkState(newTrackSelectorResult.selections[i] == null);
+//        Assertions.checkState(newTrackSelectorResult.selections[i] == null);
       }
     }
     return positionUs;
