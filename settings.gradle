@@ -1,2 +1,4 @@
 rootProject.name = "SharkPlayer"
 include ':app'
+gradle.ext.exoplayerModulePrefix = 'exoplayer-'
+apply from: file("./exoplayer/core_settings.gradle")

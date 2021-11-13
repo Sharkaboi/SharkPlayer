@@ -62,8 +62,10 @@ dependencies {
     implementation "me.saket.cascade:cascade:$cascade_version"
 
     //exoplayer
-    implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+//    implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
+//    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+    implementation project(':exoplayer-library-core')
+    implementation project(':exoplayer-library-ui')
 
     //ffmpeg
     implementation "com.writingminds:FFmpegAndroid:$ffmpeg_version"
