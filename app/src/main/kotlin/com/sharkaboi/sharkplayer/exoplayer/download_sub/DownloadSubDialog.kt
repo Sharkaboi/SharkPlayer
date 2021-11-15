@@ -1,10 +1,12 @@
 package com.sharkaboi.sharkplayer.exoplayer.download_sub
 
 import android.app.Dialog
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -33,7 +35,16 @@ class DownloadSubDialog : BottomSheetDialogFragment() {
         dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         return dialog
     }
-    
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val parentLayout =
+            dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val layoutParams = parentLayout?.layoutParams
+        layoutParams?.width = WindowManager.LayoutParams.MATCH_PARENT
+        parentLayout?.layoutParams = layoutParams
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
