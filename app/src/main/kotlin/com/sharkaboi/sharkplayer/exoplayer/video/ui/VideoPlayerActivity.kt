@@ -17,6 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides
+import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.sharkaboi.sharkplayer.R
 import com.sharkaboi.sharkplayer.common.extensions.observe
@@ -138,6 +140,7 @@ class VideoPlayerActivity : AppCompatActivity() {
             setSubErrorHandler()
             player?.playWhenReady = videoInfo.playWhenReady
             player?.addListener(getPlayListListener(videoInfo)!!)
+            player?.addAnalyticsListener(EventLogger(trackSelector))
             updateFileNameOf(player?.currentMediaItem)
             setDownloadListener()
         }
@@ -157,52 +160,57 @@ class VideoPlayerActivity : AppCompatActivity() {
             }
 
             override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
+                setTrackSelectionOptions(tracksInfo, videoInfo)
                 super.onTracksInfoChanged(tracksInfo)
-
-                val trackInfo = trackSelector?.currentMappedTrackInfo
-                val rendererCount = trackInfo?.rendererCount
-                val builder = trackSelector?.buildUponParameters()
-
-                if (videoInfo.subtitleOptions is SubtitleOptions.WithTrackId) {
-                    val selectedTrackId = videoInfo.subtitleOptions.trackId
-
-                    (0..(rendererCount ?: 0)).forEach {
-                        val rendererType = trackInfo?.getRendererType(it)
-                        if (rendererType == C.TRACK_TYPE_TEXT) {
-                            builder?.clearSelectionOverrides(it)?.setRendererDisabled(it, false)
-                            val override =
-                                DefaultTrackSelector.SelectionOverride(selectedTrackId, 0)
-                            builder?.setSelectionOverride(
-                                it,
-                                trackInfo.getTrackGroups(it),
-                                override
-                            )
-                        }
-                    }
-                }
-
-                if (videoInfo.audioOptions is AudioOptions.WithTrackId) {
-                    val selectedTrackId = videoInfo.audioOptions.trackId
-
-                    (0..(rendererCount ?: 0)).forEach {
-                        val rendererType = trackInfo?.getRendererType(it)
-                        if (rendererType == C.TRACK_TYPE_AUDIO) {
-                            builder?.clearSelectionOverrides(it)?.setRendererDisabled(it, false)
-                            val override =
-                                DefaultTrackSelector.SelectionOverride(selectedTrackId, 0)
-                            builder?.setSelectionOverride(
-                                it,
-                                trackInfo.getTrackGroups(it),
-                                override
-                            )
-                        }
-                    }
-                }
-
-                trackSelector?.setParameters(builder!!)
             }
         }
         return playListListener
+    }
+
+    private fun setTrackSelectionOptions(tracksInfo: TracksInfo?, videoInfo: VideoInfo) {
+        val builder = player?.trackSelectionParameters?.buildUpon()
+
+        if (videoInfo.subtitleOptions is SubtitleOptions.WithTrackId) {
+            val selectedTrackId = videoInfo.subtitleOptions.trackId
+
+            val subGroups =
+                tracksInfo?.trackGroupInfos?.filter { it.trackType == C.TRACK_TYPE_TEXT }
+            Timber.d(subGroups.toString())
+            val subGroup = subGroups?.map { it.trackGroup }?.getOrNull(selectedTrackId)
+            Timber.d(subGroup?.toBundle().toString())
+            if (subGroup != null && subGroup.length > 0) {
+                val override = TrackSelectionOverrides.Builder()
+                    .setOverrideForType(
+                        TrackSelectionOverrides.TrackSelectionOverride(
+                            subGroup,
+                            listOf(0)
+                        )
+                    ).build()
+                builder?.setTrackSelectionOverrides(override)
+            }
+        }
+
+        if (videoInfo.audioOptions is AudioOptions.WithTrackId) {
+            val selectedTrackId = videoInfo.audioOptions.trackId
+
+            val audioGroups =
+                tracksInfo?.trackGroupInfos?.filter { it.trackType == C.TRACK_TYPE_AUDIO }
+            val audioGroup = audioGroups?.map { it.trackGroup }?.getOrNull(selectedTrackId)
+            if (audioGroup != null && audioGroup.length > 0) {
+                val override = TrackSelectionOverrides.Builder()
+                    .setOverrideForType(
+                        TrackSelectionOverrides.TrackSelectionOverride(
+                            audioGroup,
+                            listOf(0)
+                        )
+                    ).build()
+                builder?.setTrackSelectionOverrides(override)
+            }
+        }
+
+        builder?.build()?.let {
+            player?.trackSelectionParameters = it
+        }
     }
 
     private fun setDownloadListener() {
