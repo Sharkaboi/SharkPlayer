@@ -170,7 +170,7 @@
         android:background="@android:color/transparent"
         android:clipToPadding="false"
         android:gravity="center"
-        android:padding="24dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/exo_video_file_name"
