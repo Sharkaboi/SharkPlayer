@@ -43,6 +43,7 @@
     <string name="download_subtitle">Download subtitle</string>
     <string name="search">Search</string>
     <string name="download_subtitle_item">Download subtitle item</string>
+    <string name="lock_orientation">Lock Orientation</string>
     <string-array name="rescale_supported_resolutions">
         <item>480p</item>
         <item>720p</item>

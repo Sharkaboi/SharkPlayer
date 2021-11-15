@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- 0dp dimensions are used to prevent this view from influencing the size of
@@ -61,6 +62,13 @@
                 style="@style/ExoStyledControls.Button.Bottom"
                 android:contentDescription="@string/download_subtitle"
                 android:src="@drawable/ic_download_sub" />
+
+            <ImageButton
+                android:id="@+id/exo_lock_orientation"
+                style="@style/ExoStyledControls.Button.Bottom"
+                android:contentDescription="@string/lock_orientation"
+                android:src="@drawable/ic_lock_rotation"
+                app:tint="@color/white" />
 
             <ImageButton
                 android:id="@id/exo_shuffle"

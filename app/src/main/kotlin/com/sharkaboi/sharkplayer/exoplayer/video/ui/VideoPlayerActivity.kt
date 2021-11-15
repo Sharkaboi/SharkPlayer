@@ -1,14 +1,20 @@
 package com.sharkaboi.sharkplayer.exoplayer.video.ui
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.util.MimeTypes
@@ -48,6 +54,14 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     private fun initViews() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        setLockOrientationListener()
+    }
+
+    private fun setLockOrientationListener() {
+        val btnLockOrientation = findViewById<View>(R.id.exo_lock_orientation)
+        btnLockOrientation.setOnClickListener {
+            toggleLockedOrientation()
+        }
     }
 
     private fun setObservers() {
@@ -94,7 +108,6 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     private fun handleMetaDataUpdate(videoInfo: VideoInfo) =
         lifecycleScope.launch(Dispatchers.Main) {
-//        resetPlayer()
             trackSelector = DefaultTrackSelector(this@VideoPlayerActivity)
             val builder = trackSelector!!.buildUponParameters()
             when (videoInfo.subtitleOptions) {
@@ -217,10 +230,37 @@ class VideoPlayerActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    fun resetPlayer() {
+    private fun resetPlayer() {
         binding.playerView.player = null
         playListListener?.let { player?.removeListener(it) }
         player?.release()
         player?.cleanErrorCallback()
+    }
+
+    var isOrientationLocked = false
+    private fun toggleLockedOrientation() {
+        if (isOrientationLocked) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        } else {
+            when (resources.configuration.orientation) {
+                ORIENTATION_PORTRAIT -> setPortraitMode()
+                ORIENTATION_LANDSCAPE -> setLandScapeMode()
+                else -> setLandScapeMode()
+            }
+        }
+        isOrientationLocked = !isOrientationLocked
+        val btnLockOrientation = findViewById<ImageView>(R.id.exo_lock_orientation)
+        btnLockOrientation?.load(
+            if (isOrientationLocked) R.drawable.ic_locked_rotation else R.drawable.ic_lock_rotation
+        )
+    }
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    private fun setPortraitMode() {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    private fun setLandScapeMode(orientation: Int = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+        requestedOrientation = orientation
     }
 }
