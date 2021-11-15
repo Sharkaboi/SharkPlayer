@@ -20,7 +20,9 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -28,6 +30,7 @@ import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.google.android.exoplayer2.video.VideoSize;
+
 import java.util.List;
 
 /**
@@ -676,7 +679,19 @@ public class ForwardingPlayer implements Player {
     player.setDeviceMuted(muted);
   }
 
-  /** Returns the {@link Player} to which operations are forwarded. */
+  @Override
+  public void setErrorCallback(ErrorCallback callback) {
+    player.setErrorCallback(callback);
+  }
+
+  @Override
+  public void cleanErrorCallback() {
+    player.cleanErrorCallback();
+  }
+
+  /**
+   * Returns the {@link Player} to which operations are forwarded.
+   */
   public Player getWrappedPlayer() {
     return player;
   }

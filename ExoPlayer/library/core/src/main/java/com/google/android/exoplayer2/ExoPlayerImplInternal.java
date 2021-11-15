@@ -26,8 +26,10 @@ import android.os.Message;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.Pair;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.DefaultMediaClock.PlaybackParametersListener;
 import com.google.android.exoplayer2.PlaybackException.ErrorCode;
 import com.google.android.exoplayer2.Player.DiscontinuityReason;
@@ -59,6 +61,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,9 +69,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** Implements the internal behavior of {@link ExoPlayerImpl}. */
+/**
+ * Implements the internal behavior of {@link ExoPlayerImpl}.
+ */
 /* package */ final class ExoPlayerImplInternal
-    implements Handler.Callback,
+        implements Handler.Callback,
         MediaPeriod.Callback,
         TrackSelector.InvalidationListener,
         MediaSourceList.MediaSourceListInfoRefreshListener,
@@ -77,6 +82,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
   private static final String TAG = "ExoPlayerImplInternal";
 
+  private Player.ErrorCallback errorCallback;
+
+  public void setErrorCallback(Player.ErrorCallback callback) {
+    this.errorCallback = callback;
+  }
+
+  public void cleanErrorCallback() {
+    this.errorCallback = null;
+  }
+
   public static final class PlaybackInfoUpdate {
 
     private boolean hasPendingChange;
@@ -84,7 +99,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
     public PlaybackInfo playbackInfo;
     public int operationAcks;
     public boolean positionDiscontinuity;
-    @DiscontinuityReason public int discontinuityReason;
+    @DiscontinuityReason
+    public int discontinuityReason;
     public boolean hasPlayWhenReadyChangeReason;
     @PlayWhenReadyChangeReason public int playWhenReadyChangeReason;
 
@@ -616,6 +632,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
       Log.e(TAG, "Playback error", error);
       stopInternal(/* forceResetRenderers= */ true, /* acknowledgeStop= */ false);
       playbackInfo = playbackInfo.copyWithPlaybackError(error);
+      errorCallback.onError();
     }
     maybeNotifyPlaybackInfoChanged();
     return true;

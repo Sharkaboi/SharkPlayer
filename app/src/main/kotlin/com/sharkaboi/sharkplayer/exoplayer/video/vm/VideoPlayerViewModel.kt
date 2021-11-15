@@ -7,6 +7,7 @@ import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs
 import com.sharkaboi.sharkplayer.exoplayer.video.repo.VideoPlayerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,6 +27,10 @@ constructor(
     val downloadedSubUri: LiveData<Uri?> = _downloadedSubUri
 
     init {
+        loadVideoFromArgs()
+    }
+
+    private fun loadVideoFromArgs() {
         if (videoNavArgs == null || videoNavArgs.videoPaths.isEmpty()) {
             _uiState.setInvalidData("Path was null")
         } else {
@@ -51,6 +56,12 @@ constructor(
     fun setDownloadedSubUri(uri: Uri) {
         _downloadedSubUri.value = uri
         Timber.d("Set downloaded sub uri $uri")
+    }
+
+    fun reloadVideo() {
+        viewModelScope.launch(Dispatchers.Main) {
+            loadVideoFromArgs()
+        }
     }
 
     companion object {

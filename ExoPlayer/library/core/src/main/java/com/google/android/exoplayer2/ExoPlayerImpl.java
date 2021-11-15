@@ -30,8 +30,10 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.ExoPlayer.AudioOffloadListener;
 import com.google.android.exoplayer2.PlayerMessage.Target;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
@@ -59,6 +61,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -1864,11 +1867,22 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
   @RequiresApi(31)
   private static final class Api31 {
-    private Api31() {}
+    private Api31() {
+    }
 
     public static PlayerId createPlayerId() {
       // TODO: Create a MediaMetricsListener and obtain LogSessionId from it.
       return new PlayerId(LogSessionId.LOG_SESSION_ID_NONE);
     }
+  }
+
+  @Override
+  public void setErrorCallback(ErrorCallback callback) {
+    internalPlayer.setErrorCallback(callback);
+  }
+
+  @Override
+  public void cleanErrorCallback() {
+    internalPlayer.cleanErrorCallback();
   }
 }

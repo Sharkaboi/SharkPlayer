@@ -8,13 +8,20 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import com.sharkaboi.sharkplayer.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-internal fun Activity.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) =
-    Toast.makeText(this, message, length).show()
+internal fun AppCompatActivity.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) =
+    lifecycleScope.launch(Dispatchers.Main) {
+        Toast.makeText(this@showToast, message, length).show()
+    }
 
-internal fun Activity.showToast(@StringRes id: Int, length: Int = Toast.LENGTH_SHORT) =
-    Toast.makeText(this, id, length).show()
+internal fun AppCompatActivity.showToast(@StringRes id: Int, length: Int = Toast.LENGTH_SHORT) =
+    lifecycleScope.launch(Dispatchers.Main) {
+        Toast.makeText(this@showToast, id, length).show()
+    }
 
 internal inline fun <reified T : Activity> Activity.launch(block: Intent.() -> Unit = {}) {
     val intent = Intent(this, T::class.java)

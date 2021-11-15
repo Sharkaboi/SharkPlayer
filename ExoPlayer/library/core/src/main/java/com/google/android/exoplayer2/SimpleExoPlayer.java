@@ -42,9 +42,11 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.Renderer.MessageType;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
@@ -78,6 +80,7 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
 import com.google.android.exoplayer2.video.spherical.SphericalGLSurfaceView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -1535,25 +1538,35 @@ public class SimpleExoPlayer extends BasePlayer
 
   @Override
   public void decreaseDeviceVolume() {
-    verifyApplicationThread();
-    streamVolumeManager.decreaseVolume();
+      verifyApplicationThread();
+      streamVolumeManager.decreaseVolume();
   }
 
-  @Override
-  public void setDeviceMuted(boolean muted) {
-    verifyApplicationThread();
-    streamVolumeManager.setMuted(muted);
-  }
+    @Override
+    public void setDeviceMuted(boolean muted) {
+        verifyApplicationThread();
+        streamVolumeManager.setMuted(muted);
+    }
 
-  @Deprecated
-  @Override
-  public void setThrowsWhenUsingWrongThread(boolean throwsWhenUsingWrongThread) {
-    this.throwsWhenUsingWrongThread = throwsWhenUsingWrongThread;
-  }
+    @Override
+    public void setErrorCallback(ErrorCallback callback) {
+        player.setErrorCallback(callback);
+    }
 
-  // Internal methods.
+    @Override
+    public void cleanErrorCallback() {
+        player.cleanErrorCallback();
+    }
 
-  private void removeSurfaceCallbacks() {
+    @Deprecated
+    @Override
+    public void setThrowsWhenUsingWrongThread(boolean throwsWhenUsingWrongThread) {
+        this.throwsWhenUsingWrongThread = throwsWhenUsingWrongThread;
+    }
+
+    // Internal methods.
+
+    private void removeSurfaceCallbacks() {
     if (sphericalGLSurfaceView != null) {
       player
           .createMessage(frameMetadataListener)

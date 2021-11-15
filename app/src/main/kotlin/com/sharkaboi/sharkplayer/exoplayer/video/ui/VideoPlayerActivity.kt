@@ -1,5 +1,6 @@
 package com.sharkaboi.sharkplayer.exoplayer.video.ui
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -7,10 +8,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
+import androidx.lifecycle.lifecycleScope
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.util.MimeTypes
 import com.sharkaboi.sharkplayer.R
@@ -25,6 +24,8 @@ import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerState
 import com.sharkaboi.sharkplayer.exoplayer.video.vm.VideoPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 
@@ -33,6 +34,8 @@ import java.io.File
 class VideoPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVideoPlayerBinding
     private var player: ExoPlayer? = null
+    private var trackSelector: DefaultTrackSelector? = null
+    private var playListListener: Player.Listener? = null
     private val videoPlayerViewModel by viewModels<VideoPlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,57 +66,130 @@ class VideoPlayerActivity : AppCompatActivity() {
 
             val currentMediaItem = player?.currentMediaItem ?: return@observe
 
-            player?.let {
-                val currentIndex = it.currentMediaItemIndex
-                it.removeMediaItem(currentIndex)
-                val subConfiguration =
-                    MediaItem.SubtitleConfiguration.Builder(uri)
-                        .setMimeType(MimeTypes.APPLICATION_SUBRIP)
-                        .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                        .setRoleFlags(C.ROLE_FLAG_SUBTITLE)
-                        .setLabel("Downloads - ${File(uri.toString()).name}")
-                        .build()
-                val mergedMediaItem = currentMediaItem.buildUpon()
-                    .setSubtitleConfigurations(
-                        currentMediaItem.localConfiguration?.subtitleConfigurations.orEmpty()
-                            .plus(subConfiguration)
-                    ).build()
-                Timber.d(mergedMediaItem.toString())
-                it.addMediaItem(mergedMediaItem)
-            }
+            loadDownloadedSubOnto(currentMediaItem, uri)
         }
     }
 
-    private fun handleMetaDataUpdate(videoInfo: VideoInfo) {
-        val trackSelector = DefaultTrackSelector(this)
-        val builder = trackSelector.buildUponParameters()
-        when (videoInfo.subtitleOptions) {
-            is SubtitleOptions.WithLanguages -> {
-                builder.setPreferredTextLanguages(*videoInfo.subtitleOptions.languages.toTypedArray())
+    private fun loadDownloadedSubOnto(currentMediaItem: MediaItem, uri: Uri) {
+        player?.let {
+            val currentIndex = it.currentMediaItemIndex
+            it.removeMediaItem(currentIndex)
+            val subConfiguration =
+                MediaItem.SubtitleConfiguration.Builder(uri)
+                    .setMimeType(MimeTypes.APPLICATION_SUBRIP)
+                    .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                    .setRoleFlags(C.ROLE_FLAG_SUBTITLE)
+                    .setLabel("Downloads - ${File(uri.toString()).name}")
+                    .build()
+            val mergedMediaItem = currentMediaItem.buildUpon()
+                .setSubtitleConfigurations(
+                    currentMediaItem.localConfiguration?.subtitleConfigurations.orEmpty()
+                        .plus(subConfiguration)
+                ).build()
+            Timber.d(mergedMediaItem.toString())
+            it.addMediaItem(currentIndex, mergedMediaItem)
+            it.play()
+        }
+    }
+
+    private fun handleMetaDataUpdate(videoInfo: VideoInfo) =
+        lifecycleScope.launch(Dispatchers.Main) {
+//        resetPlayer()
+            trackSelector = DefaultTrackSelector(this@VideoPlayerActivity)
+            val builder = trackSelector!!.buildUponParameters()
+            when (videoInfo.subtitleOptions) {
+                is SubtitleOptions.WithLanguages -> {
+                    builder?.setPreferredTextLanguages(*videoInfo.subtitleOptions.languages.toTypedArray())
+                }
+                is SubtitleOptions.WithTrackId -> {
+                    // TODO: 25-09-2021
+                    //builder.setSelectionOverride()
+                }
             }
-            is SubtitleOptions.WithTrackId -> {
-                // TODO: 25-09-2021
-                //builder.setSelectionOverride()
+            when (videoInfo.audioOptions) {
+                is AudioOptions.WithLanguages -> {
+                    builder?.setPreferredAudioLanguages(*videoInfo.audioOptions.languages.toTypedArray())
+                }
+                is AudioOptions.WithTrackId -> {
+                    // TODO: 25-09-2021
+                    //builder.setSelectionOverride()
+                }
+            }
+            trackSelector?.setParameters(builder)
+            player = ExoPlayer.Builder(this@VideoPlayerActivity)
+                .setTrackSelector(trackSelector!!)
+                .build()
+            binding.playerView.player = player
+            player?.setVideosAsPlayList(videoInfo.videoMediaItems)
+            player?.prepare()
+            setSubErrorHandler()
+            player?.playWhenReady = videoInfo.playWhenReady
+            player?.addListener(getPlayListListener(videoInfo)!!)
+            updateFileNameOf(player?.currentMediaItem)
+            setDownloadListener()
+        }
+
+    private fun setSubErrorHandler() {
+        player?.setErrorCallback {
+            showToast("Corrupted subtitle file from open subtitles")
+            videoPlayerViewModel.reloadVideo()
+        }
+    }
+
+    private fun getPlayListListener(videoInfo: VideoInfo): Player.Listener? {
+        playListListener = object : Player.Listener {
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                super.onMediaItemTransition(mediaItem, reason)
+                updateFileNameOf(mediaItem)
+            }
+
+            override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
+                super.onTracksInfoChanged(tracksInfo)
+
+                val trackInfo = trackSelector?.currentMappedTrackInfo
+                val rendererCount = trackInfo?.rendererCount
+                val builder = trackSelector?.buildUponParameters()
+
+                if (videoInfo.subtitleOptions is SubtitleOptions.WithTrackId) {
+                    val selectedTrackId = videoInfo.subtitleOptions.trackId
+
+                    (0..(rendererCount ?: 0)).forEach {
+                        val rendererType = trackInfo?.getRendererType(it)
+                        if (rendererType == C.TRACK_TYPE_TEXT) {
+                            builder?.clearSelectionOverrides(it)?.setRendererDisabled(it, false)
+                            val override =
+                                DefaultTrackSelector.SelectionOverride(selectedTrackId, 0)
+                            builder?.setSelectionOverride(
+                                it,
+                                trackInfo.getTrackGroups(it),
+                                override
+                            )
+                        }
+                    }
+                }
+
+                if (videoInfo.audioOptions is AudioOptions.WithTrackId) {
+                    val selectedTrackId = videoInfo.audioOptions.trackId
+
+                    (0..(rendererCount ?: 0)).forEach {
+                        val rendererType = trackInfo?.getRendererType(it)
+                        if (rendererType == C.TRACK_TYPE_AUDIO) {
+                            builder?.clearSelectionOverrides(it)?.setRendererDisabled(it, false)
+                            val override =
+                                DefaultTrackSelector.SelectionOverride(selectedTrackId, 0)
+                            builder?.setSelectionOverride(
+                                it,
+                                trackInfo.getTrackGroups(it),
+                                override
+                            )
+                        }
+                    }
+                }
+
+                trackSelector?.setParameters(builder!!)
             }
         }
-        when (videoInfo.audioOptions) {
-            is AudioOptions.WithLanguages -> {
-                builder.setPreferredAudioLanguages(*videoInfo.audioOptions.languages.toTypedArray())
-            }
-            is AudioOptions.WithTrackId -> {
-                // TODO: 25-09-2021
-                //builder.setSelectionOverride()
-            }
-        }
-        trackSelector.setParameters(builder)
-        player = ExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
-        binding.playerView.player = player
-        player?.setVideosAsPlayList(videoInfo.videoMediaItems)
-        player?.prepare()
-        player?.playWhenReady = videoInfo.playWhenReady
-        player?.addListener(playListListener)
-        updateFileNameOf(player?.currentMediaItem)
-        setDownloadListener()
+        return playListListener
     }
 
     private fun setDownloadListener() {
@@ -129,13 +205,6 @@ class VideoPlayerActivity : AppCompatActivity() {
         DownloadSubDialog().show(supportFragmentManager, DownloadSubDialog::class.simpleName)
     }
 
-    private val playListListener = object : Player.Listener {
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            super.onMediaItemTransition(mediaItem, reason)
-            updateFileNameOf(mediaItem)
-        }
-    }
-
     private fun updateFileNameOf(mediaItem: MediaItem?) {
         val tvFileName = binding.playerView.findViewById<TextView>(R.id.exo_video_file_name)
         tvFileName?.isSelected = true
@@ -144,9 +213,14 @@ class VideoPlayerActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        binding.playerView.player = null
-        player?.removeListener(playListListener)
-        player?.release()
+        resetPlayer()
         super.onDestroy()
+    }
+
+    fun resetPlayer() {
+        binding.playerView.player = null
+        playListListener?.let { player?.removeListener(it) }
+        player?.release()
+        player?.cleanErrorCallback()
     }
 }

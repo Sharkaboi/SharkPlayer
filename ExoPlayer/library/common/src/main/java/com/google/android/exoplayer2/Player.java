@@ -27,10 +27,12 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -43,6 +45,7 @@ import com.google.android.exoplayer2.util.FlagSet;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.common.base.Objects;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -2437,12 +2440,26 @@ public interface Player {
    */
   void setDeviceVolume(@IntRange(from = 0) int volume);
 
-  /** Increases the volume of the device. */
+  /**
+   * Increases the volume of the device.
+   */
   void increaseDeviceVolume();
 
-  /** Decreases the volume of the device. */
+  /**
+   * Decreases the volume of the device.
+   */
   void decreaseDeviceVolume();
 
-  /** Sets the mute state of the device. */
+  /**
+   * Sets the mute state of the device.
+   */
   void setDeviceMuted(boolean muted);
+
+  void setErrorCallback(ErrorCallback callback);
+
+  void cleanErrorCallback();
+
+  interface ErrorCallback {
+    void onError();
+  }
 }
