@@ -47,12 +47,14 @@ class DownloadSubDialog : BottomSheetDialogFragment() {
     }
 
     private fun setListeners() {
-        val debounce = debounce<CharSequence?>(scope = lifecycleScope) {
+        val debounce = debounce<CharSequence?>(
+            scope = lifecycleScope,
+            delay = 500L
+        ) {
             downloadSubViewModel.searchSubs(it)
         }
         binding.etDownloadSub.doOnTextChanged { text, _, _, _ ->
-//            debounce(text)
-            downloadSubViewModel.searchSubs(text)
+            debounce(text)
         }
     }
 
