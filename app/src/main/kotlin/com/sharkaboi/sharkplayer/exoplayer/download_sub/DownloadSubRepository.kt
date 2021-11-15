@@ -22,7 +22,9 @@ class DownloadSubRepository
             .query(text)
             .build()
         val subs =
-            openSubtitlesService.search(OpenSubtitlesService.TemporaryUserAgent, url).toList()
+            openSubtitlesService.search(OpenSubtitlesService.TemporaryUserAgent, url).filter {
+                it.SubFormat.equals("srt", ignoreCase = true)
+            }.toList()
         TaskState.Success(subs)
     }
 

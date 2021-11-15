@@ -77,8 +77,7 @@ class VideoPlayerActivity : AppCompatActivity() {
                     .setSubtitleConfigurations(
                         currentMediaItem.localConfiguration?.subtitleConfigurations.orEmpty()
                             .plus(subConfiguration)
-                    )
-                    .build()
+                    ).build()
                 Timber.d(mergedMediaItem.toString())
                 it.addMediaItem(mergedMediaItem)
             }
