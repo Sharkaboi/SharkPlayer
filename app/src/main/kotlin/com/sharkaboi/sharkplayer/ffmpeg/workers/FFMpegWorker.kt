@@ -16,55 +16,77 @@ import com.sharkaboi.sharkplayer.ffmpeg.FFMpegDataSource
 import com.sharkaboi.sharkplayer.ffmpeg.command.FFMpegCommand
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.*
 import timber.log.Timber
+import java.io.File
 
 @HiltWorker
 class FFMpegWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val ffMpegDataSource: FFMpegDataSource
-) : CoroutineWorker(context, params) {
+) : Worker(context, params) {
 
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
+    private val job = Job()
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+        cleanup()
+    }
 
-    override suspend fun doWork(): Result {
-        try {
-            val cmd = inputData.getStringArray(FFMPEG_CMD_KEY)
-                ?: return Result.failure()
+    override fun onStopped() {
+        super.onStopped()
+        job.cancel()
+        cleanup()
+    }
 
-            val notificationTitle = inputData.getString(NOTIFICATION_TITLE_KEY)
-                ?: return Result.failure()
-
-            val content = inputData.getString(NOTIFICATION_CONTENT_KEY)
-                ?: String.emptyString
-
-            val foregroundInfo = createForegroundInfo(notificationTitle, content)
-            setForeground(foregroundInfo)
-
-            Timber.d("cmd : ${cmd.joinToString()}")
-            Timber.d("content : $content")
-
-            val result = ffMpegDataSource.loadBinary()
-            if (result.isFailure) {
-                Timber.d("Couldn't load ffmpeg lib due to ${(result as TaskState.Failure).error.message}")
-                return Result.failure()
-            }
-
-            return when (val operationResult = ffMpegDataSource.execute(cmd)) {
-                is TaskState.Failure -> {
-                    Timber.d("ffmpeg failure : ${operationResult.error.message}")
-                    Result.failure()
-                }
-                is TaskState.Success -> {
-                    Timber.d("ffmpeg success : ${operationResult.data}")
-                    Result.success()
-                }
-            }
-        } finally {
-            Timber.d("Ffmpeg cleaned")
+    private fun cleanup() {
+        inputData.getString(TARGET_FILE_PATH_KEY)?.let {
+            File(it).delete()
+            Timber.d("File cleaned")
             ffMpegDataSource.killProcess()
+            Timber.d("FFMPEG Killed")
+        }
+    }
+
+    override fun doWork(): Result {
+        return runBlocking(Dispatchers.IO + job + exceptionHandler) {
+            doFFMpegTask()
+        }
+    }
+
+    private suspend fun doFFMpegTask() = withContext(Dispatchers.IO) {
+        val cmd = inputData.getStringArray(FFMPEG_CMD_KEY)
+            ?: return@withContext Result.failure()
+
+        val notificationTitle = inputData.getString(NOTIFICATION_TITLE_KEY)
+            ?: return@withContext Result.failure()
+
+        val content = inputData.getString(NOTIFICATION_CONTENT_KEY)
+            ?: String.emptyString
+
+        val foregroundInfo = createForegroundInfo(notificationTitle, content)
+        setForegroundAsync(foregroundInfo).await()
+
+        Timber.d("cmd : ${cmd.joinToString()}")
+        Timber.d("content : $content")
+
+        val result = ffMpegDataSource.loadBinary()
+        if (result.isFailure) {
+            Timber.d("Couldn't load ffmpeg lib due to ${(result as TaskState.Failure).error.message}")
+            return@withContext Result.failure()
+        }
+
+        return@withContext when (val operationResult = ffMpegDataSource.execute(cmd)) {
+            is TaskState.Failure -> {
+                Timber.d("ffmpeg failure : ${operationResult.error.message}")
+                Result.failure()
+            }
+            is TaskState.Success -> {
+                Timber.d("ffmpeg success : ${operationResult.data}")
+                Result.success()
+            }
         }
     }
 
@@ -116,6 +138,7 @@ class FFMpegWorker @AssistedInject constructor(
         private const val FFMPEG_CMD_KEY = "cmdKey"
         private const val NOTIFICATION_CONTENT_KEY = "notificationContent"
         private const val NOTIFICATION_TITLE_KEY = "notificationTitle"
+        private const val TARGET_FILE_PATH_KEY = "targetFilePath"
         private const val NOTIFICATION_ID = 42069
         val packages = setOf(
             "com.sharkaboi.sharkplayer.ffmpeg.workers.FFMpegWorker",
@@ -126,11 +149,13 @@ class FFMpegWorker @AssistedInject constructor(
             cmd: FFMpegCommand,
             notificationTitle: String,
             notificationContent: String,
+            targetFilePath: String
         ): Data {
             return workDataOf(
                 FFMPEG_CMD_KEY to cmd,
                 NOTIFICATION_CONTENT_KEY to notificationContent,
                 NOTIFICATION_TITLE_KEY to notificationTitle,
+                TARGET_FILE_PATH_KEY to targetFilePath
             )
         }
     }

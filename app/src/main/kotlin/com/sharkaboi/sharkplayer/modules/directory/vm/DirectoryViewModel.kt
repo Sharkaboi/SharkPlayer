@@ -114,7 +114,7 @@ class DirectoryViewModel
             return
         }
 
-        val cmd = FFMpegCommandWrapper.rescaleVideo(videoFile, targetResolution)
+        val (cmd, outputPath) = FFMpegCommandWrapper.rescaleVideo(videoFile, targetResolution)
         val notificationContent = getApplication<SharkPlayer>()
             .getString(
                 R.string.rescale_notification_content,
@@ -128,7 +128,8 @@ class DirectoryViewModel
         val inputData = FFMpegWorker.getWorkData(
             cmd,
             notificationTitle = notificationTitle,
-            notificationContent = notificationContent
+            notificationContent = notificationContent,
+            targetFilePath = outputPath
         )
         val rescaleWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<FFMpegWorker>()
             .setInputData(inputData)

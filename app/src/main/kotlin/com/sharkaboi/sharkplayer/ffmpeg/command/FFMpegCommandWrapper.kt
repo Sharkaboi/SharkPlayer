@@ -10,7 +10,7 @@ object FFMpegCommandWrapper {
     fun rescaleVideo(
         videoFile: SharkPlayerFile.VideoFile,
         targetResolution: String
-    ): FFMpegCommand {
+    ): Pair<FFMpegCommand, String> {
         val dirPath = videoFile.parentPath
         val outputPath = buildString {
             append(dirPath)
@@ -28,7 +28,7 @@ object FFMpegCommandWrapper {
         val outputWidth = (inputWidth / (inputHeight / outputHeight)).nextEvenInt()
 
         // ffmpeg -i input.mp4 -vcodec libx264 -crf 27 -preset veryfast -c:a copy -s 960x540 output.mp4
-        return arrayOf(
+        val cmd = arrayOf(
             "-i",
             videoFile.path,
             "-vcodec",
@@ -43,5 +43,6 @@ object FFMpegCommandWrapper {
             "${outputWidth}x$outputHeight",
             outputPath
         )
+        return Pair(cmd, outputPath)
     }
 }
