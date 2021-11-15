@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ConcatAdapter
 import com.sharkaboi.sharkplayer.BottomNavGraphDirections
 import com.sharkaboi.sharkplayer.common.extensions.getDefaultDirectories
 import com.sharkaboi.sharkplayer.common.extensions.initLinearDefaults
@@ -16,7 +17,7 @@ import com.sharkaboi.sharkplayer.common.extensions.showToast
 import com.sharkaboi.sharkplayer.common.models.SharkPlayerFile
 import com.sharkaboi.sharkplayer.databinding.FragmentHomeBinding
 import com.sharkaboi.sharkplayer.modules.home.adapters.HomeDirectoriesAdapter
-import com.sharkaboi.sharkplayer.modules.home.adapters.HomeFavoritesAdapter
+import com.sharkaboi.sharkplayer.modules.home.adapters.HomeHintAdapter
 import com.sharkaboi.sharkplayer.modules.home.vm.HomeState
 import com.sharkaboi.sharkplayer.modules.home.vm.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var favoritesAdapter: HomeFavoritesAdapter
+    private lateinit var favoritesAdapter: HomeDirectoriesAdapter
     private val homeViewModel by viewModels<HomeViewModel>()
     private val navController by lazy { findNavController() }
 
@@ -39,7 +40,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.rvFavorites.adapter = null
         binding.rvHomeDirectories.adapter = null
         _binding = null
     }
@@ -51,37 +51,43 @@ class HomeFragment : Fragment() {
     }
 
     private fun initViews() {
-        setupHomeDefaultDirectoriesList()
-        setupFavoriteDirectoriesList()
+        setupHomeDirsList()
     }
 
-    private fun setupHomeDefaultDirectoriesList() {
+    private fun setupHomeDirsList() {
         val defaultFileDirs = requireContext().getDefaultDirectories()
         val rvHomeDirectories = binding.rvHomeDirectories
         rvHomeDirectories.initLinearDefaults(context)
-        rvHomeDirectories.adapter = HomeDirectoriesAdapter { item ->
-            openDirectory(item)
-        }.apply {
-            submitList(defaultFileDirs)
-        }
-    }
-
-    private fun setupFavoriteDirectoriesList() {
-        val rvFavorites = binding.rvFavorites
-        rvFavorites.initLinearDefaults(context, hasFixedSize = true)
-        favoritesAdapter = HomeFavoritesAdapter(
+        val homeHintAdapter = HomeHintAdapter("Home")
+        val homeDirAdapter = HomeDirectoriesAdapter(
+            isHomeDirs = true,
+            onItemClick = { item ->
+                openDirectory(item)
+            },
+            onItemRemove = { }
+        )
+        homeDirAdapter.submitList(defaultFileDirs)
+        val favsHintAdapter = HomeHintAdapter("Favorites")
+        favoritesAdapter = HomeDirectoriesAdapter(
+            isHomeDirs = false,
             onItemClick = { item ->
                 openDirectory(item)
             },
             onItemRemove = { item ->
                 homeViewModel.removeFavorite(item)
-            })
-        rvFavorites.adapter = favoritesAdapter
+            }
+        )
+        favoritesAdapter.submitList(defaultFileDirs)
+        rvHomeDirectories.adapter = ConcatAdapter(
+            homeHintAdapter,
+            homeDirAdapter,
+            favsHintAdapter,
+            favoritesAdapter
+        )
     }
 
     private fun setObservers() {
         observe(homeViewModel.favorites) { favorites ->
-            // TODO: 18-09-2021 Remove ripple, add nested scrolling maybe?
             favoritesAdapter.submitList(favorites)
         }
         observe(homeViewModel.uiState) { state ->

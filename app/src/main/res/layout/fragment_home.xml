@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".modules.home.ui.HomeFragment">
 
-    <TextView
-        android:id="@+id/tvHomeHint"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/home"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHomeDirectories"
         android:layout_width="0dp"
@@ -26,34 +14,9 @@
         android:nestedScrollingEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvHomeHint"
-        tools:itemCount="2"
-        tools:listitem="@layout/item_directory_file" />
-
-    <TextView
-        android:id="@+id/tvFavoritesHint"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/favorites"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rvHomeDirectories" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFavorites"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:nestedScrollingEnabled="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvFavoritesHint"
-        tools:itemCount="5"
-        tools:listitem="@layout/item_directory_file" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:itemCount="4"
+        tools:listitem="@layout/item_home_hint" />
 
     <ProgressBar
         android:id="@+id/progress"
