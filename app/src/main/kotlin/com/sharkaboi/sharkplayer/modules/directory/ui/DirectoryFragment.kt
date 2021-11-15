@@ -72,6 +72,8 @@ class DirectoryFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_add_favorite -> directoryViewModel.toggleFavorite()
+            R.id.item_subtitle_track -> showSubtitleTrackDialog(directoryViewModel.subtitleIndexOfDirectory.value)
+            R.id.item_audio_track -> showAudioTrackDialog(directoryViewModel.audioIndexOfDirectory.value)
             else -> super.onOptionsItemSelected(item)
         }
         return true
@@ -157,19 +159,11 @@ class DirectoryFragment : Fragment() {
             directoryAdapter.submitList(files)
             setPlayListListener(files)
         }
-        observe(directoryViewModel.subtitleIndexOfDirectory) { subtitleIndex ->
-            val subtitleItem = binding.toolbar.menu.findItem(R.id.item_subtitle_track)
-            subtitleItem.setOnMenuItemClickListener {
-                showSubtitleTrackDialog(subtitleIndex)
-                true
-            }
+        observe(directoryViewModel.subtitleIndexOfDirectory) {
+            activity?.invalidateOptionsMenu()
         }
-        observe(directoryViewModel.audioIndexOfDirectory) { audioIndex ->
-            val audioItem = binding.toolbar.menu.findItem(R.id.item_audio_track)
-            audioItem.setOnMenuItemClickListener {
-                showAudioTrackDialog(audioIndex)
-                true
-            }
+        observe(directoryViewModel.audioIndexOfDirectory) {
+            activity?.invalidateOptionsMenu()
         }
     }
 
