@@ -58,6 +58,7 @@ class DirectoryAdapter(
                     binding.ivThumbnail.load(item.path.toUri()) {
                         error(R.drawable.ic_audio_file)
                         fallback(R.drawable.ic_audio_file)
+                        placeholder(R.drawable.ic_audio_file)
                     }
                     binding.tvName.text = item.fileName
                     binding.tvDetails.text = buildString {
@@ -82,6 +83,7 @@ class DirectoryAdapter(
                     binding.ivThumbnail.setThumbnailOf(item) {
                         error(R.drawable.ic_video_file)
                         fallback(R.drawable.ic_video_file)
+                        placeholder(R.drawable.ic_video_file)
                     }
                     binding.tvName.text = item.fileName
                     binding.tvDetails.text = buildString {
