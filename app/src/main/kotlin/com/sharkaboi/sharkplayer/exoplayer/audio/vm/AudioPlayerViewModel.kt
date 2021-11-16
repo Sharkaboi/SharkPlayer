@@ -2,10 +2,10 @@ package com.sharkaboi.sharkplayer.exoplayer.audio.vm
 
 import androidx.lifecycle.*
 import com.sharkaboi.sharkplayer.common.util.TaskState
-import com.sharkaboi.sharkplayer.exoplayer.audio.model.AudioInfo
 import com.sharkaboi.sharkplayer.exoplayer.audio.repo.AudioPlayerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +28,7 @@ constructor(
     }
 
     private fun loadVideoMetadata(audioPath: String) {
+        Timber.d("Vm called")
         _uiState.setLoading()
         viewModelScope.launch {
             when (val result = audioPlayerRepository.getMetaDataOf(audioPath)) {
@@ -35,11 +36,6 @@ constructor(
                 is TaskState.Success -> _uiState.setSuccess(result.data)
             }
         }
-    }
-
-    private fun updateMetadata(audioInfo: AudioInfo) {
-        _uiState.setLoading()
-        _uiState.setSuccess(audioInfo)
     }
 
     companion object {

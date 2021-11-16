@@ -116,19 +116,13 @@ class VideoPlayerActivity : AppCompatActivity() {
                 is SubtitleOptions.WithLanguages -> {
                     builder?.setPreferredTextLanguages(*videoInfo.subtitleOptions.languages.toTypedArray())
                 }
-                is SubtitleOptions.WithTrackId -> {
-                    // TODO: 25-09-2021
-                    //builder.setSelectionOverride()
-                }
+                else -> Unit
             }
             when (videoInfo.audioOptions) {
                 is AudioOptions.WithLanguages -> {
                     builder?.setPreferredAudioLanguages(*videoInfo.audioOptions.languages.toTypedArray())
                 }
-                is AudioOptions.WithTrackId -> {
-                    // TODO: 25-09-2021
-                    //builder.setSelectionOverride()
-                }
+                else -> Unit
             }
             trackSelector?.setParameters(builder)
             player = ExoPlayer.Builder(this@VideoPlayerActivity)
@@ -179,7 +173,7 @@ class VideoPlayerActivity : AppCompatActivity() {
             Timber.d(subGroups.toString())
             val subGroup = subGroups?.map { it.trackGroup }?.getOrNull(selectedTrackId)
             Timber.d(subGroup.toString())
-            val override = if (subGroup != null && subGroup.length > 0) {
+            if (subGroup != null && subGroup.length > 0) {
                 Timber.d("Set to override sub at index $selectedTrackId")
                 overrideBuilder
                     .setOverrideForType(
@@ -200,7 +194,7 @@ class VideoPlayerActivity : AppCompatActivity() {
             val audioGroups =
                 tracksInfo?.trackGroupInfos?.filter { it.trackType == C.TRACK_TYPE_AUDIO }
             val audioGroup = audioGroups?.map { it.trackGroup }?.getOrNull(selectedTrackId)
-            val override = if (audioGroup != null && audioGroup.length > 0) {
+            if (audioGroup != null && audioGroup.length > 0) {
                 Timber.d("Set to override audio at index $selectedTrackId")
                 overrideBuilder
                     .setOverrideForType(

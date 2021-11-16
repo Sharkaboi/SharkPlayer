@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navArgs
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector
+import com.google.android.exoplayer2.util.EventLogger
 import com.sharkaboi.sharkplayer.common.extensions.observe
 import com.sharkaboi.sharkplayer.common.extensions.setAudio
 import com.sharkaboi.sharkplayer.common.extensions.showToast
@@ -14,12 +17,15 @@ import com.sharkaboi.sharkplayer.exoplayer.audio.model.AudioInfo
 import com.sharkaboi.sharkplayer.exoplayer.audio.vm.AudioPlayerState
 import com.sharkaboi.sharkplayer.exoplayer.audio.vm.AudioPlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class AudioPlayerActivity : AppCompatActivity() {
     private val args: AudioPlayerActivityArgs by navArgs()
     private lateinit var binding: ActivityAudioPlayerBinding
-    private var player: SimpleExoPlayer? = null
+    private var player: ExoPlayer? = null
     private val audioPlayerViewModel by viewModels<AudioPlayerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,25 +47,36 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.progress.isVisible = state is AudioPlayerState.Loading
             when (state) {
                 is AudioPlayerState.InvalidData -> showToast(state.message)
-                is AudioPlayerState.Success -> handleMetaDataUpdate(state.audioInfo)
+                is AudioPlayerState.Success -> {
+                    handleMetaDataUpdate(state.audioInfo)
+                }
                 else -> Unit
             }
         }
     }
 
-    private fun handleMetaDataUpdate(audioInfo: AudioInfo) {
-        player = SimpleExoPlayer.Builder(this).build()
-        binding.playerView.player = player
-        player?.setAudio(audioInfo.audioUri)
-        player?.prepare()
-        player?.playWhenReady = audioInfo.playWhenReady
-        binding.tvFileName.isSelected = true
-        binding.tvFileName.text = audioInfo.name
+    private fun handleMetaDataUpdate(audioInfo: AudioInfo) =
+        lifecycleScope.launch(Dispatchers.Main) {
+            Timber.d("called")
+            resetPlayer()
+            player = ExoPlayer.Builder(this@AudioPlayerActivity).build()
+            binding.playerView.player = player
+            player?.setAudio(audioInfo.audioUri)
+            player?.prepare()
+            player?.addAnalyticsListener(EventLogger(player?.trackSelector as MappingTrackSelector?))
+            player?.playWhenReady = audioInfo.playWhenReady
+            binding.tvFileName.isSelected = true
+            binding.tvFileName.text = audioInfo.name
+        }
+
+    private fun resetPlayer() {
+        binding.playerView.player = null
+        player?.release()
+        player?.cleanErrorCallback()
     }
 
     override fun onDestroy() {
-        binding.playerView.player = null
-        player?.release()
+        resetPlayer()
         super.onDestroy()
     }
 }
