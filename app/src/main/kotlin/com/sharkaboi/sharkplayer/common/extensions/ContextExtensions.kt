@@ -110,7 +110,7 @@ internal fun Context.showIntegerValuePromptDialog(
         .setPositiveButton(buttonHintId ?: android.R.string.ok) { dialog, _ ->
             val number = binding.etValue.text?.toString()?.toIntOrNull()
             if (number == null || number < 0) {
-                binding.etValue.error = getString(R.string.invalid_track_index)
+                showToast(R.string.invalid_track_index)
             } else {
                 onEnter(number)
                 dialog.dismiss()

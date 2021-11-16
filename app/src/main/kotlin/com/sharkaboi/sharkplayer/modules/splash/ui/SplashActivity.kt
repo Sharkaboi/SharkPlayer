@@ -51,11 +51,19 @@ class SplashActivity : AppCompatActivity() {
     private fun handlePermissionResult(grantedMap: Map<String, Boolean>) {
         var isGranted = true
         grantedMap.forEach { isGranted = isGranted && it.value }
-        if (isGranted) {
-            openAppFlow()
-        } else {
+
+        if (grantedMap.isEmpty()) {
             showToast(R.string.permissions_hint)
             checkPermissions()
+            return
         }
+
+        if (!isGranted) {
+            showToast(R.string.permissions_hint)
+            checkPermissions()
+            return
+        }
+
+        openAppFlow()
     }
 }
