@@ -18,7 +18,6 @@ import coil.load
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides
-import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.sharkaboi.sharkplayer.R
 import com.sharkaboi.sharkplayer.common.extensions.observe
@@ -134,7 +133,7 @@ class VideoPlayerActivity : AppCompatActivity() {
             setSubErrorHandler()
             player?.playWhenReady = videoInfo.playWhenReady
             player?.addListener(getPlayListListener(videoInfo)!!)
-            player?.addAnalyticsListener(EventLogger(trackSelector))
+//            player?.addAnalyticsListener(EventLogger(trackSelector))
             updateFileNameOf(player?.currentMediaItem)
             setDownloadListener()
         }

@@ -7,8 +7,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navArgs
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector
-import com.google.android.exoplayer2.util.EventLogger
 import com.sharkaboi.sharkplayer.common.extensions.observe
 import com.sharkaboi.sharkplayer.common.extensions.setAudio
 import com.sharkaboi.sharkplayer.common.extensions.showToast
@@ -63,7 +61,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.playerView.player = player
             player?.setAudio(audioInfo.audioUri)
             player?.prepare()
-            player?.addAnalyticsListener(EventLogger(player?.trackSelector as MappingTrackSelector?))
+//            player?.addAnalyticsListener(EventLogger(player?.trackSelector as MappingTrackSelector?))
             player?.playWhenReady = audioInfo.playWhenReady
             binding.tvFileName.isSelected = true
             binding.tvFileName.text = audioInfo.name
