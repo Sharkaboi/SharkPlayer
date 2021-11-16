@@ -33,6 +33,7 @@
             android:theme="@style/Theme.SharkPlayer.Audio" />
         <activity
             android:name=".modules.main.ui.MainActivity"
+            android:launchMode="singleTask"
             android:exported="true" />
         <activity
             android:name=".modules.splash.ui.SplashActivity"
