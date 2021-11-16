@@ -16,6 +16,7 @@ import com.sharkaboi.sharkplayer.exoplayer.util.SubtitleOptions
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoInfo
 import com.sharkaboi.sharkplayer.exoplayer.video.model.VideoNavArgs
 import kotlinx.coroutines.flow.firstOrNull
+import timber.log.Timber
 import java.io.File
 
 class VideoPlayerRepository(
@@ -105,6 +106,7 @@ class VideoPlayerRepository(
         val audioLanguageOptions = sharedPrefRepository.getAudioLanguages()
         val audioIndexOptions =
             dataStoreRepository.audioTrackIndices.firstOrNull()?.get(dirPath)
+        Timber.d("audioTrackIndices : ${dataStoreRepository.audioTrackIndices.firstOrNull()}")
 
         return when {
             audioIndexOptions != null -> AudioOptions.WithTrackId(audioIndexOptions)
@@ -126,6 +128,9 @@ class VideoPlayerRepository(
         val subtitleIndexOptions =
             dataStoreRepository.subtitleTrackIndices.firstOrNull()?.get(dirPath)
 
+        Timber.d("Language Options : $subtitleLanguageOptions")
+        Timber.d("Sub Index Options : $subtitleIndexOptions")
+        Timber.d("subtitleTrackIndices : ${dataStoreRepository.subtitleTrackIndices.firstOrNull()}")
         return when {
             subtitleIndexOptions != null -> SubtitleOptions.WithTrackId(subtitleIndexOptions)
             subtitleLanguageOptions != null -> {

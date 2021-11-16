@@ -15,13 +15,13 @@
                 tools:icon="@drawable/ic_favorite_selected" />
 
             <item
-                android:id="@+id/item_subtitle_track"
+                android:id="@+id/item_audio_track"
                 android:icon="@drawable/ic_audio_track"
                 android:title="@string/set_audio_track"
                 app:showAsAction="ifRoom" />
 
             <item
-                android:id="@+id/item_audio_track"
+                android:id="@+id/item_subtitle_track"
                 android:icon="@drawable/ic_subtitle_track"
                 android:title="@string/set_subtitle_track"
                 app:showAsAction="ifRoom" />

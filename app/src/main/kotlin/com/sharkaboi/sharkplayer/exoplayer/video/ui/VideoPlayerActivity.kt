@@ -161,6 +161,7 @@ class VideoPlayerActivity : AppCompatActivity() {
 
             override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
                 setTrackSelectionOptions(tracksInfo, videoInfo)
+                Timber.d("onTracksInfoChanged called")
                 super.onTracksInfoChanged(tracksInfo)
             }
         }
@@ -168,8 +169,8 @@ class VideoPlayerActivity : AppCompatActivity() {
     }
 
     private fun setTrackSelectionOptions(tracksInfo: TracksInfo?, videoInfo: VideoInfo) {
-        val builder = player?.trackSelectionParameters?.buildUpon()
-
+        val trackSelectorBuilder = player?.trackSelectionParameters?.buildUpon()
+        val overrideBuilder = TrackSelectionOverrides.Builder()
         if (videoInfo.subtitleOptions is SubtitleOptions.WithTrackId) {
             val selectedTrackId = videoInfo.subtitleOptions.trackId
 
@@ -177,16 +178,19 @@ class VideoPlayerActivity : AppCompatActivity() {
                 tracksInfo?.trackGroupInfos?.filter { it.trackType == C.TRACK_TYPE_TEXT }
             Timber.d(subGroups.toString())
             val subGroup = subGroups?.map { it.trackGroup }?.getOrNull(selectedTrackId)
-            Timber.d(subGroup?.toBundle().toString())
-            if (subGroup != null && subGroup.length > 0) {
-                val override = TrackSelectionOverrides.Builder()
+            Timber.d(subGroup.toString())
+            val override = if (subGroup != null && subGroup.length > 0) {
+                Timber.d("Set to override sub at index $selectedTrackId")
+                overrideBuilder
                     .setOverrideForType(
                         TrackSelectionOverrides.TrackSelectionOverride(
                             subGroup,
                             listOf(0)
                         )
-                    ).build()
-                builder?.setTrackSelectionOverrides(override)
+                    )
+            } else {
+                Timber.d("Removed sub overrides as index - $selectedTrackId group - $subGroup")
+                overrideBuilder.clearOverridesOfType(C.TRACK_TYPE_TEXT)
             }
         }
 
@@ -196,19 +200,25 @@ class VideoPlayerActivity : AppCompatActivity() {
             val audioGroups =
                 tracksInfo?.trackGroupInfos?.filter { it.trackType == C.TRACK_TYPE_AUDIO }
             val audioGroup = audioGroups?.map { it.trackGroup }?.getOrNull(selectedTrackId)
-            if (audioGroup != null && audioGroup.length > 0) {
-                val override = TrackSelectionOverrides.Builder()
+            val override = if (audioGroup != null && audioGroup.length > 0) {
+                Timber.d("Set to override audio at index $selectedTrackId")
+                overrideBuilder
                     .setOverrideForType(
                         TrackSelectionOverrides.TrackSelectionOverride(
                             audioGroup,
                             listOf(0)
                         )
-                    ).build()
-                builder?.setTrackSelectionOverrides(override)
+                    )
+            } else {
+                Timber.d("Removed audio overrides as index - $selectedTrackId group - $audioGroup")
+                overrideBuilder
+                    .clearOverridesOfType(C.TRACK_TYPE_AUDIO)
             }
         }
 
-        builder?.build()?.let {
+        trackSelectorBuilder?.setTrackSelectionOverrides(overrideBuilder.build())
+
+        trackSelectorBuilder?.build()?.let {
             player?.trackSelectionParameters = it
         }
     }
