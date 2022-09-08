@@ -1,3 +1,3 @@
 # SharkPlayer
 
-University project - WIP
+University project - Android Project 
